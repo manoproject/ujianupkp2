@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi CAT Ujian Penyesuaian Kenaikan Pangkat Tk. II & Tk. III</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for crisp icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f5ff',
+              100: '#e0ecff',
+              600: '#1e40af',
+              700: '#1d4ed8',
+              800: '#1e3a8a',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars and transitions */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .grid-btn {
+      transition: all 0.15s ease-in-out;
+    }
+    .grid-btn:hover {
+      transform: translateY(-1px);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .75; }
+    }
+    .timer-warning {
+      animation: pulse-subtle 1.5s infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <header class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-950 text-white shadow-lg sticky top-0 z-40 border-b border-blue-800/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+        <div class="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-400/30 flex items-center justify-center text-amber-400 text-xl font-bold shadow-inner">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white flex items-center gap-2">
+            SIMULASI CAT BKN / PEMDA
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-500/20 text-blue-200 border border-blue-400/20">UPKP 2026</span>
+          </h1>
+          <p class="text-xs text-slate-300 hidden sm:block">Ujian Penyesuaian Kenaikan Pangkat Tingkat II & Tingkat III (D-III & S-1/D-IV)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Font Size Scaler -->
+        <div class="hidden md:flex items-center bg-slate-800/80 rounded-lg p-1 border border-slate-700 text-xs">
+          <button onclick="changeFontSize(-1)" title="Perkecil Tulisan" class="px-2 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition"><i class="fa-solid fa-minus"></i></button>
+          <span class="px-1 text-slate-400 select-none">A</span>
+          <button onclick="changeFontSize(1)" title="Perbesar Tulisan" class="px-2 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <button onclick="showInfoModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-circle-info text-blue-400"></i>
+          <span>Ambang Batas</span>
+        </button>
+
+        <button id="btn-header-home" onclick="confirmExitExam()" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600/80 hover:bg-red-600 text-white transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span class="hidden sm:inline">Keluar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-start">
+
+    <!-- VIEW 1: HOME & MODE SELECTION -->
+    <div id="view-home" class="space-y-6 max-w-4xl mx-auto w-full my-auto py-6">
+      <!-- Banner -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-900 to-indigo-900 p-6 sm:p-8 text-white relative overflow-hidden">
+          <div class="relative z-10 max-w-2xl">
+            <span class="inline-block px-3 py-1 bg-amber-400/20 text-amber-300 text-xs font-bold rounded-full mb-3 border border-amber-400/30">
+              STANDAR KELULUSAN RESMI BKN / INSTANSI
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Simulasi Ujian Penyesuaian Kenaikan Pangkat (UPKP)</h2>
+            <p class="mt-2 text-slate-200 text-sm leading-relaxed">
+              Tingkat II & Tingkat III (Pendidikan Diploma III dan Diploma IV / Sarjana). Dilengkapi 100 butir soal lengkap, kunci jawaban, dan pembahasan mendalam berbasis peraturan perundang-undangan terbaru.
+            </p>
+          </div>
+          <div class="absolute right-[-20px] bottom-[-20px] opacity-10 text-9xl text-white pointer-events-none hidden sm:block">
+            <i class="fa-solid fa-file-signature"></i>
+          </div>
+        </div>
+
+        <!-- Breakdown Subtes Cards -->
+        <div class="p-6 bg-slate-50 border-b border-slate-200">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-blue-600"></i> Ketentuan Nilai Ambang Batas Kelulusan (Passing Grade)
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">TWK (No. 1-30)</span>
+                <p class="text-xs text-slate-600 font-medium mt-1">Tes Wawasan Kebangsaan</p>
+                <p class="text-[11px] text-slate-400">Pancasila, UUD 45, Sejarah, B. Indonesia</p>
+              </div>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-slate-500">Passing Grade:</span>
+                <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">90 <span class="text-[10px] text-slate-400">/ 150</span></span>
+              </div>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">TKT (No. 31-55)</span>
+                <p class="text-xs text-slate-600 font-medium mt-1">Tes Kompetensi Teknis</p>
+                <p class="text-[11px] text-slate-400">SPPN, UU ASN 20/2023, Pelayanan Publik</p>
+              </div>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-slate-500">Passing Grade:</span>
+                <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">75 <span class="text-[10px] text-slate-400">/ 125</span></span>
+              </div>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">TSI (No. 56-85)</span>
+                <p class="text-xs text-slate-600 font-medium mt-1">Tes Substansi Instansi</p>
+                <p class="text-[11px] text-slate-400">RPJMD, IKU/IKM, Tata Naskah & Organisasi</p>
+              </div>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-slate-500">Passing Grade:</span>
+                <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">90 <span class="text-[10px] text-slate-400">/ 150</span></span>
+              </div>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">TKP (No. 86-100)</span>
+                <p class="text-xs text-slate-600 font-medium mt-1">Tes Kompetensi Penunjang</p>
+                <p class="text-[11px] text-slate-400">Koordinasi, Regulasi Jabatan & Prosedur</p>
+              </div>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-slate-500">Passing Grade:</span>
+                <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">45 <span class="text-[10px] text-slate-400">/ 75</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 text-[11px] text-slate-500 flex items-center gap-1.5 bg-blue-50/60 p-2 rounded-lg border border-blue-100">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+            <span><strong>Syarat Kelulusan:</strong> Peserta wajib melampaui Passing Grade di setiap subtes <strong>DAN</strong> mencapai total skor minimal <strong>300 / 500</strong>.</span>
+          </div>
+        </div>
+
+        <!-- Mode Buttons -->
+        <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-gradient-to-b from-white to-blue-50/50 p-6 rounded-2xl border-2 border-blue-200 hover:border-blue-500 transition duration-200 flex flex-col justify-between shadow-sm hover:shadow-md">
+            <div>
+              <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center text-xl mb-4 shadow">
+                <i class="fa-solid fa-stopwatch"></i>
+              </div>
+              <h4 class="text-lg font-bold text-slate-900">Mode Simulasi Ujian CAT</h4>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                Pengalaman ujian sesungguhnya: Waktu 90 Menit, indikator ragu-ragu, navigasi lembar jawaban, tanpa kunci jawaban di awal, dan kalkulasi nilai otomatis saat selesai.
+              </p>
+            </div>
+            <button onclick="startExam('exam')" class="mt-6 w-full py-3 px-4 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-sm tracking-wide shadow-md hover:shadow transition flex items-center justify-center gap-2">
+              <span>Mulai Ujian CAT (90 Menit)</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="bg-gradient-to-b from-white to-emerald-50/50 p-6 rounded-2xl border-2 border-emerald-200 hover:border-emerald-500 transition duration-200 flex flex-col justify-between shadow-sm hover:shadow-md">
+            <div>
+              <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center text-xl mb-4 shadow">
+                <i class="fa-solid fa-book-open-reader"></i>
+              </div>
+              <h4 class="text-lg font-bold text-slate-900">Mode Belajar & Latihan</h4>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                Belajar santai tanpa batasan waktu. Penjelasan & dasar hukum langsung ditampilkan setelah memilih jawaban. Bisa memfilter subtes secara mandiri.
+              </p>
+            </div>
+            <button onclick="startExam('study')" class="mt-6 w-full py-3 px-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm tracking-wide shadow-md hover:shadow transition flex items-center justify-center gap-2">
+              <span>Mulai Mode Belajar Santai</span>
+              <i class="fa-solid fa-book-bookmark"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: EXAM / STUDY INTERFACE -->
+    <div id="view-exam" class="hidden flex-1 flex flex-col gap-4">
+      
+      <!-- Top Control Bar (Timer & Subtest Info) -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span id="badge-mode" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-100 text-blue-800 uppercase tracking-wide">Mode Ujian</span>
+          <span id="badge-category" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-100 text-slate-700">TWK</span>
+          <span class="text-xs text-slate-400 hidden sm:inline">|</span>
+          <span id="text-topic" class="text-xs font-medium text-slate-600 hidden md:inline">Pancasila</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Countdown Timer for Exam Mode -->
+          <div id="timer-container" class="flex items-center gap-2 bg-slate-900 text-white px-3.5 py-1.5 rounded-xl font-mono text-sm sm:text-base font-bold shadow-inner">
+            <i class="fa-regular fa-clock text-amber-400"></i>
+            <span id="timer-display">90:00</span>
+          </div>
+
+          <!-- Finish Button -->
+          <button id="btn-finish-exam" onclick="confirmSubmitExam()" class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-check-circle"></i>
+            <span>Selesai Ujian</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Layout: Question Left (Fluid), Grid Numbers Right -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 items-start">
+        
+        <!-- Left: Question Sheet (8 cols on lg) -->
+        <div class="lg:col-span-8 flex flex-col gap-4">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-7 flex flex-col justify-between min-h-[460px]">
+            
+            <!-- Question Header -->
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-base sm:text-lg font-extrabold text-blue-900">SOAL NO. <span id="q-number" class="text-xl sm:text-2xl font-black text-blue-600">1</span></span>
+                  <span class="text-xs text-slate-400">dari 100</span>
+                </div>
+                <div class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600" id="q-subtest-label">
+                  Tes Wawasan Kebangsaan (TWK)
+                </div>
+              </div>
+
+              <!-- Question Text -->
+              <div id="q-content" class="text-base sm:text-lg font-medium text-slate-800 leading-relaxed space-y-2 mb-6">
+                <!-- Injected via JS -->
+              </div>
+
+              <!-- Options List -->
+              <div id="options-container" class="space-y-3">
+                <!-- Option items rendered by JS -->
+              </div>
+
+              <!-- Immediate Explanation (for Study Mode or post-exam review) -->
+              <div id="explanation-box" class="hidden mt-6 p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-slate-800 text-sm">
+                <div class="flex items-center gap-2 font-bold text-amber-900 mb-1">
+                  <i class="fa-solid fa-lightbulb text-amber-600"></i>
+                  <span>Kunci Jawaban & Pembahasan Lengkap:</span>
+                </div>
+                <p id="explanation-text" class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-2"></p>
+              </div>
+            </div>
+
+            <!-- Bottom Navigation Bar inside Question Card -->
+            <div class="mt-8 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <button id="btn-prev" onclick="prevQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Sebelumnya</span>
+              </button>
+
+              <label id="ragu-toggle-wrap" class="flex items-center gap-2 cursor-pointer select-none bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">
+                <input type="checkbox" id="check-ragu" onchange="toggleRaguCurrent()" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+                <span>Ragu-Ragu</span>
+              </label>
+
+              <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-700 hover:bg-blue-800 text-white transition flex items-center gap-2 shadow">
+                <span>Berikutnya</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Number Grid Sheet (4 cols on lg) -->
+        <div class="lg:col-span-4 flex flex-col gap-3">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 sticky top-20">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+              <h3 class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-table-cells text-blue-600"></i>
+                <span>Navigasi Nomor Soal</span>
+              </h3>
+              <span id="answered-counter" class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">0 / 100</span>
+            </div>
+
+            <!-- Subtest Filter tabs for Grid -->
+            <div class="grid grid-cols-4 gap-1 mb-3 text-[10px] font-bold text-center">
+              <button onclick="filterGridCategory('ALL')" class="cat-pill py-1 rounded bg-slate-200 text-slate-800" data-cat="ALL">Semua</button>
+              <button onclick="filterGridCategory('TWK')" class="cat-pill py-1 rounded bg-slate-100 text-slate-600 hover:bg-blue-50" data-cat="TWK">TWK</button>
+              <button onclick="filterGridCategory('TKT')" class="cat-pill py-1 rounded bg-slate-100 text-slate-600 hover:bg-emerald-50" data-cat="TKT">TKT</button>
+              <button onclick="filterGridCategory('TSI_TKP')" class="cat-pill py-1 rounded bg-slate-100 text-slate-600 hover:bg-purple-50" data-cat="TSI_TKP">TSI/TKP</button>
+            </div>
+
+            <!-- Legends -->
+            <div class="grid grid-cols-3 gap-2 text-[10px] text-slate-500 pb-3 mb-3 border-b border-slate-100">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-emerald-600 inline-block"></span>
+                <span>Dijawab</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                <span>Ragu-ragu</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-slate-200 inline-block"></span>
+                <span>Belum</span>
+              </div>
+            </div>
+
+            <!-- Scrollable 100 Grid container -->
+            <div id="grid-sheet" class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 gap-2 max-h-[380px] overflow-y-auto p-1 text-xs">
+              <!-- Dynamically populated buttons 1 to 100 -->
+            </div>
+
+            <!-- Quick subtest jump button -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>Lompat cepat:</span>
+              <div class="flex gap-1 font-bold">
+                <button onclick="jumpTo(1)" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200">1</button>
+                <button onclick="jumpTo(31)" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200">31</button>
+                <button onclick="jumpTo(56)" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200">56</button>
+                <button onclick="jumpTo(86)" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200">86</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW 3: SCORECARD / RESULT SCREEN -->
+    <div id="view-result" class="hidden space-y-6 max-w-4xl mx-auto w-full py-4">
+      
+      <!-- Primary Status Banner -->
+      <div id="result-status-card" class="rounded-3xl p-6 sm:p-8 text-white shadow-lg text-center relative overflow-hidden transition duration-300">
+        <div id="result-bg-glow" class="absolute inset-0 bg-gradient-to-r from-emerald-700 to-teal-800 opacity-95"></div>
+        <div class="relative z-10 space-y-3">
+          <div id="result-icon-badge" class="w-16 h-16 mx-auto rounded-2xl bg-white/20 backdrop-blur border border-white/30 flex items-center justify-center text-3xl">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <span id="result-sub-badge" class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold tracking-widest uppercase">
+            STATUS KELULUSAN AKHIR
+          </span>
+          <h2 id="result-status-text" class="text-3xl sm:text-4xl font-black tracking-tight">MEMENUHI AMBANG BATAS (LULUS)</h2>
+          <p id="result-note-text" class="text-xs sm:text-sm text-emerald-100 max-w-xl mx-auto">
+            Selamat! Anda berhasil melampaui seluruh nilai batas kelulusan per subtes dan total nilai batas minimal yang dipersyaratkan.
+          </p>
+
+          <div class="pt-4 flex items-center justify-center gap-6 text-center">
+            <div>
+              <p class="text-[11px] uppercase tracking-wider text-white/70">TOTAL NILAI ANDA</p>
+              <p id="result-total-score" class="text-3xl sm:text-4xl font-extrabold text-amber-300">0 <span class="text-base text-white/70 font-normal">/ 500</span></p>
+            </div>
+            <div class="h-10 w-[1px] bg-white/20"></div>
+            <div>
+              <p class="text-[11px] uppercase tracking-wider text-white/70">AMBANG BATAS TOTAL</p>
+              <p class="text-3xl sm:text-4xl font-extrabold text-white">300</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown Table & Status per Subtest based on Attachment 2 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-4 sm:p-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-blue-600"></i>
+            <span>Rincian Nilai Berdasarkan Lampiran Ambang Batas Ujian</span>
+          </h3>
+          <span class="text-[11px] text-slate-500">Bobot Benar = 5 Poin</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
+              <tr>
+                <th class="p-3.5">Jenis Tes</th>
+                <th class="p-3.5 text-center">Jumlah Soal</th>
+                <th class="p-3.5 text-center">Nilai Maksimal</th>
+                <th class="p-3.5 text-center">Batas Kelulusan</th>
+                <th class="p-3.5 text-center">Nilai Anda</th>
+                <th class="p-3.5 text-center">Status Subtes</th>
+              </tr>
+            </thead>
+            <tbody id="score-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated rows for TWK, TKT, TSI, TKP, and TOTAL -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button onclick="goHome()" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-800 hover:bg-slate-900 text-white transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-house"></i>
+            <span>Menu Utama</span>
+          </button>
+          <button onclick="startExam('exam')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-blue-700 hover:bg-blue-800 text-white transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Ulangi Ujian</span>
+          </button>
+        </div>
+
+        <!-- Review Mode toggle -->
+        <button onclick="enterReviewMode()" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-amber-600 hover:bg-amber-700 text-white transition flex items-center gap-2 shadow">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>Tinjau Pembahasan 100 Soal</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- VIEW 4: FULL REVIEW MODE -->
+    <div id="view-review" class="hidden space-y-6 max-w-4xl mx-auto w-full py-4">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 sticky top-16 z-30">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-book text-amber-600"></i>
+            <span>Tinjauan Lengkap 100 Soal & Kunci Jawaban</span>
+          </h2>
+          <p class="text-xs text-slate-500">Evaluasi kembali jawaban Anda dengan kunci resmi & pembahasan yuridis/konseptual.</p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Filter buttons -->
+          <div class="bg-slate-100 p-1 rounded-lg text-xs font-semibold flex gap-1">
+            <button onclick="filterReviewList('all')" class="review-filter-btn px-2.5 py-1 rounded bg-white shadow-xs text-slate-800" data-filter="all">Semua</button>
+            <button onclick="filterReviewList('wrong')" class="review-filter-btn px-2.5 py-1 rounded text-red-700 hover:bg-white" data-filter="wrong">Salah</button>
+            <button onclick="filterReviewList('correct')" class="review-filter-btn px-2.5 py-1 rounded text-emerald-700 hover:bg-white" data-filter="correct">Benar</button>
+          </div>
+          <button onclick="showResultSummaryView()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white hover:bg-slate-700 transition">
+            Kembali ke Nilai
+          </button>
+        </div>
+      </div>
+
+      <!-- Container for all 100 question cards -->
+      <div id="review-cards-list" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal: Passing Grade Information -->
+  <div id="modal-info" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full p-6 animate-scale-in">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-scale-balanced text-blue-600"></i>
+          <span>Pedoman Ambang Batas Kelulusan</span>
+        </h3>
+        <button onclick="closeInfoModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <div class="mt-4 space-y-3 text-xs sm:text-sm text-slate-600">
+        <p class="leading-relaxed">
+          Berdasarkan ketentuan ujian penyesuaian kenaikan pangkat tingkat II dan tingkat III (Diploma III & Diploma IV / Sarjana):
+        </p>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
+          <div class="flex justify-between font-semibold text-slate-800 border-b pb-1">
+            <span>Jenis Tes</span>
+            <span>Soal / Nilai Maks / Ambang Batas</span>
+          </div>
+          <div class="flex justify-between">
+            <span>1. Tes Wawasan Kebangsaan (TWK)</span>
+            <span class="font-mono">30 / 150 / <strong>90</strong></span>
+          </div>
+          <div class="flex justify-between">
+            <span>2. Tes Kompetensi Teknis (TKT)</span>
+            <span class="font-mono">25 / 125 / <strong>75</strong></span>
+          </div>
+          <div class="flex justify-between">
+            <span>3. Tes Substansi Instansi (TSI)</span>
+            <span class="font-mono">30 / 150 / <strong>90</strong></span>
+          </div>
+          <div class="flex justify-between">
+            <span>4. Tes Kompetensi Penunjang (TKP)</span>
+            <span class="font-mono">15 / 75 / <strong>45</strong></span>
+          </div>
+          <div class="flex justify-between font-bold text-slate-900 pt-1 border-t">
+            <span>TOTAL KESELURUHAN</span>
+            <span class="font-mono">100 / 500 / <strong>300</strong></span>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900 text-xs leading-relaxed">
+          <i class="fa-solid fa-circle-exclamation mr-1 text-amber-600"></i>
+          <strong>Ketentuan Kelulusan:</strong> Peserta dinyatakan <strong>LULUS</strong> apabila mencapai nilai ambang batas pada <em>masing-masing subtes</em> secara mandiri dan total nilai minimal 300. Jika salah satu subtes gagal memenuhi nilai batas, maka dinyatakan belum memenuhi syarat.
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button onclick="closeInfoModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold">Tutup Informasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirm Finish Exam -->
+  <div id="modal-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 text-center">
+      <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4">
+        <i class="fa-solid fa-question"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900">Konfirmasi Selesai Ujian</h3>
+      <p id="confirm-stat-text" class="text-xs sm:text-sm text-slate-600 mt-2">
+        Apakah Anda yakin ingin mengakhiri sesi ujian sekarang?
+      </p>
+
+      <div class="mt-4 p-3 bg-slate-50 rounded-xl text-xs text-slate-500 border border-slate-200 flex justify-around">
+        <div>Dijawab: <span id="modal-stat-answered" class="font-bold text-emerald-600">0</span></div>
+        <div>Ragu: <span id="modal-stat-ragu" class="font-bold text-amber-600">0</span></div>
+        <div>Kosong: <span id="modal-stat-empty" class="font-bold text-red-600">0</span></div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <button onclick="closeConfirmModal()" class="py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          Lanjutkan Ujian
+        </button>
+        <button onclick="executeFinishExam()" class="py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-blue-700 hover:bg-blue-800 text-white transition shadow">
+          Ya, Kirim Jawaban
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Question Database containing all 100 verified items from Attachment 1 */
+    const QUESTIONS_DATA = [
+      // 1 - 8: Pancasila
+      {
+        id: 1,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Pancasila sebagai dasar negara Republik Indonesia berarti bahwa Pancasila menjadi ....",
+        options: {
+          A: "pedoman kehidupan pribadi",
+          B: "sumber dari segala sumber hukum negara",
+          C: "dasar kebijakan luar negeri saja",
+          D: "simbol persatuan tanpa konsekuensi hukum"
+        },
+        answer: "B",
+        explanation: "Pancasila berkedudukan sebagai dasar negara dan sumber nilai tertinggi dalam pembentukan hukum nasional (Staatsfundamentalnorm)."
+      },
+      {
+        id: 2,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Rumusan Pancasila yang sah dan resmi tercantum dalam ....",
+        options: {
+          A: "Batang Tubuh UUD 1945",
+          B: "Pembukaan UUD 1945 alinea keempat",
+          C: "Piagam Jakarta",
+          D: "Proklamasi Kemerdekaan"
+        },
+        answer: "B",
+        explanation: "Rumusan Pancasila yang sah secara yuridis konstitusional ada pada Alinea IV Pembukaan UUD 1945."
+      },
+      {
+        id: 3,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Contoh penerapan sila \"Kemanusiaan yang Adil dan Beradab\" dalam kehidupan sehari-hari adalah ....",
+        options: {
+          A: "mengutamakan kelompok sendiri",
+          B: "menghargai martabat dan hak setiap manusia",
+          C: "memaksakan pendapat",
+          D: "mengutamakan kepentingan mayoritas"
+        },
+        answer: "B",
+        explanation: "Sila kedua menekankan pentingnya pengakuan atas harkat, martabat, dan hak asasi sesama manusia tanpa diskriminasi."
+      },
+      {
+        id: 4,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Sikap yang paling sesuai dengan sila keempat Pancasila ketika terjadi perbedaan pendapat dalam suatu rapat adalah ....",
+        options: {
+          A: "mengikuti pendapat pimpinan",
+          B: "suara terbanyak sejak awal",
+          C: "mengutamakan musyawarah untuk mencapai mufakat",
+          D: "menyerahkan pada peserta senior"
+        },
+        answer: "C",
+        explanation: "Sila keempat menjunjung tinggi musyawarah mufakat yang diliputi oleh semangat kekeluargaan dalam pengambilan keputusan bersama."
+      },
+      {
+        id: 5,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Hubungan antara Pancasila dan UUD 1945 yang tepat adalah ....",
+        options: {
+          A: "Pancasila penjabaran UUD 1945",
+          B: "UUD 1945 sumber dari Pancasila",
+          C: "Pancasila dasar dan sumber nilai dalam penyelenggaraan negara",
+          D: "Dua hal yang tidak berkaitan"
+        },
+        answer: "C",
+        explanation: "Pancasila adalah norma fundamental negara (Staatsfundamentalnorm), sedangkan UUD 1945 adalah hukum dasar tertulis yang merupakan penjabaran dari Pancasila."
+      },
+      {
+        id: 6,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Seorang aparatur memberikan pelayanan tanpa membedakan suku, agama, status sosial. Hal ini mencerminkan nilai ....",
+        options: {
+          A: "persatuan dan kemanusiaan",
+          B: "individualisme",
+          C: "primordialisme",
+          D: "eksklusivisme"
+        },
+        answer: "A",
+        explanation: "Sikap nondiskriminatif menjaga perpaduan persatuan (Sila 3) dan keadilan kemanusiaan (Sila 2)."
+      },
+      {
+        id: 7,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Pancasila disebut sebagai ideologi terbuka karena ....",
+        options: {
+          A: "dapat diganti kapan saja",
+          B: "nilai dasar tetap, penerapan menyesuaikan zaman",
+          C: "nilai diubah lewat referendum",
+          D: "tidak memiliki nilai dasar tetap"
+        },
+        answer: "B",
+        explanation: "Ideologi terbuka memiliki nilai dasar yang konstan dan abadi, namun nilai instrumental dan praksisnya dinamis serta terbuka terhadap perkembangan zaman."
+      },
+      {
+        id: 8,
+        subtest: "TWK",
+        category: "Pancasila",
+        question: "Salah satu fungsi Pancasila sebagai pandangan hidup bangsa adalah ....",
+        options: {
+          A: "menjadi pedoman dalam bersikap dan bertingkah laku",
+          B: "menggantikan seluruh peraturan",
+          C: "membatasi hubungan luar negeri",
+          D: "dasar partai politik tertentu"
+        },
+        answer: "A",
+        explanation: "Pandangan hidup (Weltanschauung) berfungsi sebagai petunjuk arah dan pedoman perilaku sehari-hari bagi seluruh masyarakat Indonesia."
+      },
+
+      // 9 - 15: UUD 1945
+      {
+        id: 9,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Salah satu tujuan negara Indonesia yang tercantum dalam Pembukaan UUD 1945 adalah ....",
+        options: {
+          A: "memperluas wilayah negara",
+          B: "mencerdaskan kehidupan bangsa",
+          C: "meningkatkan jumlah penduduk",
+          D: "menguasai ekonomi negara lain"
+        },
+        answer: "B",
+        explanation: "Empat tujuan negara pada Alinea IV: melindungi segenap bangsa Indonesia, memajukan kesejahteraan umum, mencerdaskan kehidupan bangsa, dan ikut melaksanakan ketertiban dunia."
+      },
+      {
+        id: 10,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Menurut UUD 1945, kedaulatan berada di tangan rakyat dan dilaksanakan menurut ....",
+        options: {
+          A: "keputusan pemerintah",
+          B: "kehendak mayoritas",
+          C: "Undang-Undang Dasar",
+          D: "keputusan partai politik"
+        },
+        answer: "C",
+        explanation: "Sesuai Pasal 1 Ayat (2) UUD 1945 hasil amandemen: 'Kedaulatan berada di tangan rakyat dan dilaksanakan menurut Undang-Undang Dasar.'"
+      },
+      {
+        id: 11,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Indonesia adalah negara hukum. Ketentuan tersebut secara tegas tercantum dalam ....",
+        options: {
+          A: "Pasal 1 ayat (1) UUD 1945",
+          B: "Pasal 1 ayat (2) UUD 1945",
+          C: "Pasal 1 ayat (3) UUD 1945",
+          D: "Pasal 2 ayat (1) UUD 1945"
+        },
+        answer: "C",
+        explanation: "Pasal 1 Ayat (3) UUD 1945 secara tegas menyatakan: 'Negara Indonesia adalah negara hukum.'"
+      },
+      {
+        id: 12,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Lembaga negara yang memiliki kewenangan mengubah dan menetapkan UUD adalah ....",
+        options: {
+          A: "DPR",
+          B: "Presiden",
+          C: "MPR",
+          D: "Mahkamah Konstitusi"
+        },
+        answer: "C",
+        explanation: "Berdasarkan Pasal 3 Ayat (1) UUD 1945: 'Majelis Permusyawaratan Rakyat berwenang mengubah dan menetapkan Undang-Undang Dasar.'"
+      },
+      {
+        id: 13,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Menurut UUD 1945, Presiden Republik Indonesia memegang kekuasaan pemerintahan menurut ....",
+        options: {
+          A: "keputusan DPR",
+          B: "Undang-Undang Dasar",
+          C: "keputusan MPR",
+          D: "peraturan pemerintah"
+        },
+        answer: "B",
+        explanation: "Berdasarkan Pasal 4 Ayat (1) UUD 1945: 'Presiden Republik Indonesia memegang kekuasaan pemerintahan menurut Undang-Undang Dasar.'"
+      },
+      {
+        id: 14,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Salah satu hak warga negara yang dijamin dalam UUD 1945 adalah hak untuk ....",
+        options: {
+          A: "memperoleh pendidikan",
+          B: "memperoleh jabatan tanpa syarat",
+          C: "mengabaikan hukum",
+          D: "perlakuan khusus kelompok"
+        },
+        answer: "A",
+        explanation: "Hak memperoleh pendidikan diatur secara tegas dalam Pasal 31 Ayat (1) UUD 1945: 'Setiap warga negara berhak mendapat pendidikan.'"
+      },
+      {
+        id: 15,
+        subtest: "TWK",
+        category: "UUD 1945",
+        question: "Prinsip persamaan kedudukan warga negara di dalam hukum dan pemerintahan berarti ....",
+        options: {
+          A: "hak dan kewajiban sama di hadapan hukum",
+          B: "pejabat punya kekebalan hukum",
+          C: "hukum hanya untuk masyarakat umum",
+          D: "warga boleh memilih hukum"
+        },
+        answer: "A",
+        explanation: "Asas Equality Before the Law tercantum dalam Pasal 27 Ayat (1) UUD 1945: segala warga negara bersamaan kedudukannya di dalam hukum dan pemerintahan."
+      },
+
+      // 16 - 23: Sejarah Indonesia
+      {
+        id: 16,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Organisasi Budi Utomo yang berdiri pada tahun 1908 sering dipandang sebagai tonggak ....",
+        options: {
+          A: "Revolusi Industri Indonesia",
+          B: "Kebangkitan Nasional",
+          C: "Reformasi Indonesia",
+          D: "Demokrasi Terpimpin"
+        },
+        answer: "B",
+        explanation: "Berdirinya Budi Utomo pada 20 Mei 1908 diperingati sebagai Hari Kebangkitan Nasional karena mengawali pergerakan modern secara terorganisir."
+      },
+      {
+        id: 17,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Sumpah Pemuda 28 Oktober 1928 memiliki arti penting karena ....",
+        options: {
+          A: "menandai akhir penjajahan",
+          B: "mempertegas persatuan dan identitas kebangsaan",
+          C: "menetapkan UUD 1945",
+          D: "membentuk pemerintahan RI"
+        },
+        answer: "B",
+        explanation: "Sumpah Pemuda menyatukan tekad putra-putri Indonesia dalam kesatuan satu tumpah darah, satu bangsa, dan menjunjung bahasa persatuan bahasa Indonesia."
+      },
+      {
+        id: 18,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Proklamasi Kemerdekaan Indonesia dibacakan oleh Soekarno-Hatta pada ....",
+        options: {
+          A: "17 Agustus 1945",
+          B: "18 Agustus 1945",
+          C: "20 Mei 1908",
+          D: "28 Oktober 1928"
+        },
+        answer: "A",
+        explanation: "Teks Proklamasi dibacakan oleh Ir. Soekarno didampingi Drs. Mohammad Hatta pada hari Jumat, 17 Agustus 1945 pukul 10.00 WIB."
+      },
+      {
+        id: 19,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Proklamasi Kemerdekaan Indonesia dilaksanakan di ....",
+        options: {
+          A: "Gedung Volksraad",
+          B: "Jalan Pegangsaan Timur No. 56 Jakarta",
+          C: "Istana Merdeka",
+          D: "Lapangan Ikada"
+        },
+        answer: "B",
+        explanation: "Pembacaan teks Proklamasi berlangsung di halaman kediaman Bung Karno, Jl. Pegangsaan Timur No. 56 Jakarta."
+      },
+      {
+        id: 20,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Salah satu hasil sidang PPKI tanggal 18 Agustus 1945 adalah ....",
+        options: {
+          A: "pembentukan Budi Utomo",
+          B: "pengesahan UUD 1945",
+          C: "pembentukan Volksraad",
+          D: "pelaksanaan Pemilu pertama"
+        },
+        answer: "B",
+        explanation: "Hasil sidang PPKI 18 Agustus 1945: Mengesahkan UUD 1945, memilih Ir. Soekarno sebagai Presiden dan Drs. Moh. Hatta sebagai Wakil Presiden, serta membentuk Komite Nasional."
+      },
+      {
+        id: 21,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Tokoh yang dikenal sebagai salah satu penggagas konsep negara integralistik dalam sidang BPUPKI adalah ....",
+        options: {
+          A: "Soepomo",
+          B: "Ahmad Dahlan",
+          C: "Ki Hajar Dewantara",
+          D: "Tan Malaka"
+        },
+        answer: "A",
+        explanation: "Prof. Dr. Soepomo memaparkan paham negara integralistik (negara kesatuan yang mengatasi seluruh golongan) dalam pidatonya tanggal 31 Mei 1945."
+      },
+      {
+        id: 22,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Peristiwa Rengasdengklok pada Agustus 1945 berkaitan erat dengan ....",
+        options: {
+          A: "desakan agar Proklamasi segera dilaksanakan",
+          B: "pembentukan Kabinet",
+          C: "pengesahan UUD 1945",
+          D: "pengakuan kedaulatan"
+        },
+        answer: "A",
+        explanation: "Golongan muda membawa Soekarno dan Hatta ke Rengasdengklok untuk mendesak agar proklamasi segera diproklamasikan tanpa campur tangan dan pengaruh Jepang."
+      },
+      {
+        id: 23,
+        subtest: "TWK",
+        category: "Sejarah Indonesia",
+        question: "Makna penting Proklamasi Kemerdekaan bagi bangsa Indonesia adalah ....",
+        options: {
+          A: "pernyataan Indonesia merdeka dan berdaulat",
+          B: "penyerahan ke Jepang",
+          C: "pembentukan negara federal",
+          D: "penghapusan seluruh hukum"
+        },
+        answer: "A",
+        explanation: "Proklamasi adalah kulminasi perjuangan bangsa sekaligus tonggak formal berdirinya negara Republik Indonesia yang merdeka, bersatu, dan berdaulat."
+      },
+
+      // 24 - 30: Bahasa Indonesia
+      {
+        id: 24,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Kalimat berikut yang paling efektif adalah ....",
+        options: {
+          A: "Para pegawai-pegawai diwajibkan...",
+          B: "Para pegawai diwajibkan mengikuti rapat.",
+          C: "Para pegawai diwajibkan untuk agar...",
+          D: "Pegawai-pegawai para diwajibkan..."
+        },
+        answer: "B",
+        explanation: "Pilihan B hemat kata, lugas, dan logis. Penggunaan 'para pegawai-pegawai' atau 'untuk agar' adalah bentuk pemborosan kata (pleonasme)."
+      },
+      {
+        id: 25,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Penulisan kata baku yang tepat terdapat pada ....",
+        options: {
+          A: "resiko",
+          B: "aktifitas",
+          C: "analisa",
+          D: "risiko"
+        },
+        answer: "D",
+        explanation: "Menurut KBBI, ejaan baku yang benar adalah 'risiko' (bukan resiko), 'aktivitas' (bukan aktifitas), dan 'analisis' (bukan analisa)."
+      },
+      {
+        id: 26,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Kalimat berikut yang menggunakan tanda baca secara tepat adalah ....",
+        options: {
+          A: "Rapat dilaksanakan pada Senin, 5 Oktober 2026.",
+          B: "Rapat dilaksanakan pada Senin 5 Oktober, 2026.",
+          C: "Rapat dilaksanakan pada, Senin...",
+          D: "Rapat dilaksanakan pada Senin;..."
+        },
+        answer: "A",
+        explanation: "Sesuai EYD/PUEBI, tanda koma (,) digunakan di antara nama hari dan tanggal (contoh: Senin, 5 Oktober 2026)."
+      },
+      {
+        id: 27,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Kalimat yang paling tepat untuk digunakan dalam surat dinas adalah ....",
+        options: {
+          A: "Kami mau memberitahukan...",
+          B: "Dengan ini kami sampaikan bahwa...",
+          C: "Kami kasih tahu bahwa...",
+          D: "Sehubungan kegiatan itu, maka..."
+        },
+        answer: "B",
+        explanation: "Pilihan B menggunakan ragam bahasa resmi, baku, efektif, dan santun sesuai tata naskah dinas kedinasan."
+      },
+      {
+        id: 28,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Perbaikan kalimat: \"Berdasarkan hasil rapat tersebut maka kegiatan akan dilaksanakan...\" yang paling efektif adalah ....",
+        options: {
+          A: "Berdasarkan rapat..., maka...",
+          B: "Berdasarkan hasil rapat tersebut kegiatan akan dilaksanakan pada bulan Oktober.",
+          C: "Berdasarkan daripada...",
+          D: "Berdasarkan rapat... sehingga..."
+        },
+        answer: "B",
+        explanation: "Klausul keterangan yang diawali dengan kata depan 'Berdasarkan' tidak boleh langsung disusul dengan kata sambung pembalas 'maka'."
+      },
+      {
+        id: 29,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Kata yang tepat: \"Pemerintah daerah terus berupaya meningkatkan kualitas ... publik kepada masyarakat.\"",
+        options: {
+          A: "pelayanan",
+          B: "layanaan",
+          C: "pelayanaan",
+          D: "pelayanan-pelayanan"
+        },
+        answer: "A",
+        explanation: "Nominalisasi baku yang tepat dalam tata bahasa dan konteks administrasi publik adalah 'pelayanan'."
+      },
+      {
+        id: 30,
+        subtest: "TWK",
+        category: "Bahasa Indonesia",
+        question: "Kalimat berikut yang menggunakan kata \"efektif\" dengan tepat adalah ....",
+        options: {
+          A: "Kebijakan tersebut efektif untuk meningkatkan kualitas pelayanan.",
+          B: "Menefektifkan secara efektif...",
+          C: "Efektifitas daripada... bagus sekali",
+          D: "Paling sangat efektif sekali..."
+        },
+        answer: "A",
+        explanation: "Pilihan A menggunakan makna dan fungsi kata sifat 'efektif' dengan tepat tanpa tumpang tindih kata (tidak pleonastis)."
+      },
+
+      // 31 - 37: SPPN (Tes Kompetensi Teknis)
+      {
+        id: 31,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Dasar hukum utama Sistem Perencanaan Pembangunan Nasional adalah ....",
+        options: {
+          A: "UU Nomor 25 Tahun 2004",
+          B: "UU Nomor 25 Tahun 2009",
+          C: "UU Nomor 20 Tahun 2023",
+          D: "UU Nomor 30 Tahun 2014"
+        },
+        answer: "A",
+        explanation: "Undang-Undang No. 25 Tahun 2004 mengatur tentang Sistem Perencanaan Pembangunan Nasional (SPPN)."
+      },
+      {
+        id: 32,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Tujuan utama sistem perencanaan pembangunan nasional adalah ....",
+        options: {
+          A: "mengatur seluruh kegiatan politik",
+          B: "menjamin pembangunan efektif, efisien, dan bersasaran",
+          C: "menentukan struktur kementerian",
+          D: "mengatur sistem penggajian"
+        },
+        answer: "B",
+        explanation: "SPPN menjamin terciptanya integrasi, sinkronisasi, dan sinergi baik antardaerah, antarruang, antarwaktu, antarfungsi pemerintah, maupun antarpusat dan daerah."
+      },
+      {
+        id: 33,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Dokumen perencanaan pembangunan nasional jangka waktu 20 tahun disebut ....",
+        options: {
+          A: "RPJMN",
+          B: "RKP",
+          C: "RPJPN",
+          D: "Renstra-KL"
+        },
+        answer: "C",
+        explanation: "Rencana Pembangunan Jangka Panjang Nasional (RPJPN) memuat visi, misi, dan arah pembangunan untuk periode 20 tahun."
+      },
+      {
+        id: 34,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Rencana Pembangunan Jangka Menengah Nasional (RPJMN) memiliki periode ....",
+        options: {
+          A: "1 tahun",
+          B: "3 tahun",
+          C: "5 tahun",
+          D: "20 tahun"
+        },
+        answer: "C",
+        explanation: "RPJMN adalah dokumen perencanaan pembangunan nasional berjangka waktu 5 (lima) tahun."
+      },
+      {
+        id: 35,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Rencana Kerja Pemerintah (RKP) merupakan dokumen perencanaan pembangunan periode ....",
+        options: {
+          A: "1 tahun",
+          B: "3 tahun",
+          C: "5 tahun",
+          D: "20 tahun"
+        },
+        answer: "A",
+        explanation: "RKP adalah dokumen perencanaan pembangunan nasional tahunan (1 tahun) yang menjadi pedoman penyusunan RAPBN."
+      },
+      {
+        id: 36,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Hubungan yang tepat antara perencanaan jangka panjang, menengah, dan tahunan adalah ....",
+        options: {
+          A: "berdiri sendiri",
+          B: "tahunan memperhatikan arah menengah dan panjang",
+          C: "jangka panjang mengikuti tahunan",
+          D: "hanya dokumen administratif"
+        },
+        answer: "B",
+        explanation: "Perencanaan bersifat cascading: Dokumen tahunan (RKP/RKPD) mengacu pada rencana menengah (RPJM), dan rencana menengah mengacu pada rencana jangka panjang (RPJP)."
+      },
+      {
+        id: 37,
+        subtest: "TKT",
+        category: "SPPN",
+        question: "Salah satu prinsip penting perencanaan pembangunan adalah bahwa perencanaan harus ....",
+        options: {
+          A: "bersifat tertutup",
+          B: "sistematis, terarah, terpadu, dan tanggap perubahan",
+          C: "disusun pimpinan saja",
+          D: "mengutamakan organisasi"
+        },
+        answer: "B",
+        explanation: "Perencanaan pembangunan harus dirancang secara sistematis, terpadu, partisipatif, transparan, dan tanggap terhadap dinamika perubahan zaman."
+      },
+
+      // 38 - 45: Peraturan Kepegawaian & ASN
+      {
+        id: 38,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Berdasarkan UU Nomor 20 Tahun 2023, pegawai ASN terdiri atas ....",
+        options: {
+          A: "PNS dan tenaga honorer",
+          B: "PNS dan PPPK",
+          C: "PNS dan pegawai swasta",
+          D: "PPPK dan tenaga honorer"
+        },
+        answer: "B",
+        explanation: "Pasal 5 UU No. 20 Tahun 2023 menegaskan bahwa Pegawai ASN terdiri atas Pegawai Negeri Sipil (PNS) dan Pegawai Pemerintah dengan Perjanjian Kerja (PPPK)."
+      },
+      {
+        id: 39,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Manajemen ASN diselenggarakan berdasarkan ....",
+        options: {
+          A: "sistem senioritas",
+          B: "sistem kekeluargaan",
+          C: "sistem merit",
+          D: "sistem politik"
+        },
+        answer: "C",
+        explanation: "Sistem merit merupakan kebijakan dan manajemen ASN yang didasarkan pada kualifikasi, kompetensi, dan kinerja secara adil dan wajar tanpa membedakan latar belakang politik, ras, maupun gender."
+      },
+      {
+        id: 40,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Berikut yang bukan merupakan nilai dasar ASN BerAKHLAK adalah ....",
+        options: {
+          A: "Berorientasi Pelayanan",
+          B: "Akuntabel",
+          C: "Kompetitif",
+          D: "Kolaboratif"
+        },
+        answer: "C",
+        explanation: "Tujuh Nilai Dasar ASN BerAKHLAK: Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif. 'Kompetitif' bukan bagian dari core values tersebut."
+      },
+      {
+        id: 41,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "ASN bekerja dengan jujur, cermat, disiplin, dan berintegritas tinggi. Hal ini mencerminkan nilai ....",
+        options: {
+          A: "loyal",
+          B: "akuntabel",
+          C: "harmonis",
+          D: "adaptif"
+        },
+        answer: "B",
+        explanation: "Panduan perilaku nilai 'Akuntabel' adalah melaksanakan tugas dengan jujur, bertanggung jawab, cermat, disiplin, dan berintegritas tinggi."
+      },
+      {
+        id: 42,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Seorang ASN mengikuti pelatihan untuk meningkatkan kemampuan kerja. Hal tersebut penerapan nilai ....",
+        options: {
+          A: "kompeten",
+          B: "harmonis",
+          C: "loyal",
+          D: "kolaboratif"
+        },
+        answer: "A",
+        explanation: "Nilai 'Kompeten' berorientasi pada terus belajar dan mengembangkan kapabilitas diri demi menghadapi tantangan kerja yang dinamis."
+      },
+      {
+        id: 43,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Mengusulkan inovasi digital untuk memperbaiki pelayanan yang kurang efisien mencerminkan nilai ....",
+        options: {
+          A: "loyal",
+          B: "adaptif",
+          C: "harmonis",
+          D: "akuntabel"
+        },
+        answer: "B",
+        explanation: "Nilai 'Adaptif' dicirikan oleh sikap cepat menyesuaikan diri menghadapi perubahan dan terus berinovasi serta bertindak proaktif."
+      },
+      {
+        id: 44,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Salah satu tujuan kode etik dan kode perilaku ASN adalah ....",
+        options: {
+          A: "memberikan keistimewaan",
+          B: "menjaga martabat dan kehormatan ASN serta negara",
+          C: "membatasi inovasi",
+          D: "kewenangan tanpa batas"
+        },
+        answer: "B",
+        explanation: "Kode etik dan kode perilaku bertujuan menjaga martabat, kehormatan, dan profesionalitas pegawai ASN dalam memberikan pelayanan kepada masyarakat."
+      },
+      {
+        id: 45,
+        subtest: "TKT",
+        category: "Kepegawaian ASN",
+        question: "Prinsip netralitas ASN mengandung makna bahwa ASN ....",
+        options: {
+          A: "tidak punya pendapat pribadi",
+          B: "bebas ikut politik praktis",
+          C: "tidak berpihak dari segala bentuk pengaruh politik",
+          D: "wajib mendukung partai tertentu"
+        },
+        answer: "C",
+        explanation: "Netralitas berarti setiap pegawai ASN tidak berpihak dari segala bentuk pengaruh mana pun dan tidak memihak kepada kepentingan siapa pun dalam ranah politik kekuasaan."
+      },
+
+      // 46 - 51: Pelayanan Publik
+      {
+        id: 46,
+        subtest: "TKT",
+        category: "Pelayanan Publik",
+        question: "Dasar hukum utama penyelenggaraan pelayanan publik adalah ....",
+        options: {
+          A: "UU Nomor 25 Tahun 2009",
+          B: "UU Nomor 20 Tahun 2023",
+          C: "UU Nomor 25 Tahun 2004",
+          D: "UU Nomor 17 Tahun 2003"
+        },
+        answer: "A",
+        explanation: "UU No. 25 Tahun 2009 tentang Pelayanan Publik merupakan payung hukum utama tata kelola dan standar pelayanan bagi aparatur negara."
+      },
+      {
+        id: 47,
+        subtest: "TKT",
+        category: "Pelayanan Publik",
+        question: "Salah satu tujuan pelayanan publik adalah ....",
+        options: {
+          A: "meningkatkan kepercayaan masyarakat terhadap penyelenggara",
+          B: "meningkatkan kewenangan pejabat",
+          C: "membatasi partisipasi",
+          D: "mengurangi transparansi"
+        },
+        answer: "A",
+        explanation: "Pelayanan publik yang baik bertujuan memenuhi hak-hak dasar warga, menciptakan kepastian hukum, dan membangun public trust (kepercayaan masyarakat)."
+      },
+      {
+        id: 48,
+        subtest: "TKT",
+        category: "Pelayanan Publik",
+        question: "Menetapkan standar persyaratan, prosedur, waktu, biaya, dan pengaduan merupakan penerapan ....",
+        options: {
+          A: "standar pelayanan",
+          B: "politik birokrasi",
+          C: "sentralisasi",
+          D: "privatisasi pelayanan"
+        },
+        answer: "A",
+        explanation: "Standar Pelayanan (SP) adalah tolok ukur yang dipergunakan sebagai pedoman penyelenggaraan pelayanan dan acuan penilaian kualitas pelayanan."
+      },
+      {
+        id: 49,
+        subtest: "TKT",
+        category: "Pelayanan Publik",
+        question: "Memberikan pelayanan yang sama kepada seluruh warga tanpa membedakan status sosial mencerminkan prinsip ....",
+        options: {
+          A: "diskriminasi",
+          B: "nondiskriminasi",
+          C: "eksklusivitas",
+          D: "sentralisasi"
+        },
+        answer: "B",
+        explanation: "Prinsip nondiskriminatif menjamin pelayanan diberikan setara tanpa memandang suku, agama, ras, gender, atau kedudukan sosial ekonomi."
+      },
+      {
+        id: 50,
+        subtest: "TKT",
+        category: "Pelayanan Publik",
+        question: "Langkah paling tepat jika masyarakat menemukan pelayanan tidak sesuai standar adalah ....",
+        options: {
+          A: "tuduhan di media sosial",
+          B: "menggunakan mekanisme pengaduan resmi",
+          C: "ajak orang lain protes",
+          D: "mengabaikan masalah"
+        },
+        answer: "B",
+        explanation: "Mekanisme pengaduan resmi (misalnya melalui SP4N-LAPOR!) menjamin pengaduan diproses secara sah, terlacak, dan mendapat kepastian penyelesaian hukum."
+      },
+      {
+        id: 51,
+        subtest: "TKT",
+        category: "Pelayanan Publik",
+        question: "Menyampaikan informasi mengenai persyaratan dan biaya secara terbuka menerapkan prinsip ....",
+        options: {
+          A: "transparansi",
+          B: "diskriminasi",
+          C: "kerahasiaan",
+          D: "eksklusivitas"
+        },
+        answer: "A",
+        explanation: "Prinsip transparansi mewajibkan penyedia layanan membuka informasi proses, syarat, waktu, dan biaya secara terbuka dan mudah diakses masyarakat."
+      },
+
+      // 52 - 55: Administrasi Perkantoran & Kearsipan
+      {
+        id: 52,
+        subtest: "TKT",
+        category: "Perkantoran & Kearsipan",
+        question: "Fungsi utama tata persuratan dalam organisasi pemerintahan adalah ....",
+        options: {
+          A: "memperbanyak kerjaan",
+          B: "menjamin komunikasi kedinasan tertib dan terdokumentasi",
+          C: "mengurangi dokumentasi",
+          D: "mengganti lisan"
+        },
+        answer: "B",
+        explanation: "Tata naskah dinas menjamin otentisitas, ketertiban, keabsahan hukum, dan akuntabilitas komunikasi resmi antarinstansi atau unit kerja."
+      },
+      {
+        id: 53,
+        subtest: "TKT",
+        category: "Perkantoran & Kearsipan",
+        question: "Surat dinas yang dibuat oleh instansi pemerintah harus memperhatikan ....",
+        options: {
+          A: "keindahan bahasa saja",
+          B: "tata naskah dinas dan ketentuan yang berlaku",
+          C: "jumlah halaman terbanyak",
+          D: "istilah asing"
+        },
+        answer: "B",
+        explanation: "Format naskah dinas wajib mengikuti pedoman tata naskah dinas instansi yang berlaku untuk menjamin standarisasi dan keabsahan hukum."
+      },
+      {
+        id: 54,
+        subtest: "TKT",
+        category: "Perkantoran & Kearsipan",
+        question: "Arsip yang masih sering digunakan dalam kegiatan administrasi sehari-hari disebut ....",
+        options: {
+          A: "arsip statis",
+          B: "arsip aktif",
+          C: "arsip permanen",
+          D: "arsip musnah"
+        },
+        answer: "B",
+        explanation: "Arsip aktif adalah arsip dinamis yang frekuensi penggunaannya tinggi dan/atau terus menerus dalam pelaksanaan kegiatan administrasi kantor."
+      },
+      {
+        id: 55,
+        subtest: "TKT",
+        category: "Perkantoran & Kearsipan",
+        question: "Tujuan utama pengelolaan arsip yang baik adalah ....",
+        options: {
+          A: "memenuhi ruang",
+          B: "mempersulit pencarian",
+          C: "menjamin arsip aman, autentik, dan mudah ditemukan",
+          D: "menyimpan tanpa batas"
+        },
+        answer: "C",
+        explanation: "Manajemen arsip yang efektif bertujuan memelihara keutuhan dan keamanan informasi serta memastikan penemuan kembali (retrieval) berjalan cepat dan akurat."
+      },
+
+      // 56 - 85: Tes Substansi Instansi (TSI)
+      {
+        id: 56,
+        subtest: "TSI",
+        category: "Tata Naskah & Rapat",
+        question: "Dalam rapat kedinasan, notula terutama berfungsi untuk ....",
+        options: {
+          A: "mengganti pimpinan",
+          B: "mencatat jalannya rapat dan keputusan yang dihasilkan",
+          C: "promosi organisasi",
+          D: "pendapat pribadi"
+        },
+        answer: "B",
+        explanation: "Notula merupakan risalah tertulis resmi yang mencatat seluruh rangkaian acara, pertimbangan, saran, dan keputusan final yang diambil dalam rapat."
+      },
+      {
+        id: 57,
+        subtest: "TSI",
+        category: "Tata Naskah & Alur Surat",
+        question: "Surat masuk yang harus segera ditindaklanjuti kepala bidang diproses dengan ....",
+        options: {
+          A: "disimpan saja",
+          B: "meneruskan sesuai disposisi/prosedur & mencatatnya",
+          C: "ubah isi surat",
+          D: "kirim ke semua orang"
+        },
+        answer: "B",
+        explanation: "Penanganan surat masuk wajib dicatat dalam buku agenda atau aplikasi persuratan resmi dan diteruskan menurut lembar disposisi pimpinan."
+      },
+      {
+        id: 58,
+        subtest: "TSI",
+        category: "Literasi Digital",
+        question: "Kemampuan literasi digital mencakup ....",
+        options: {
+          A: "akses internet tanpa batas",
+          B: "memahami, mengevaluasi, dan menggunakan informasi digital secara bijak",
+          C: "akses data pribadi orang",
+          D: "menyebar info cepat"
+        },
+        answer: "B",
+        explanation: "Literasi digital tidak sekadar kecakapan teknis mengoperasikan gawai, melainkan kemampuan berpikir kritis dalam mencari, memvalidasi, dan mengamankan informasi."
+      },
+      {
+        id: 59,
+        subtest: "TSI",
+        category: "Keamanan Informasi",
+        question: "Menerima tautan mencurigakan yang meminta kredensial akun kedinasan. Sikap tepat adalah ....",
+        options: {
+          A: "langsung klik",
+          B: "berikan password",
+          C: "verifikasi sumber dan jangan berikan kredensial",
+          D: "sebar tautan"
+        },
+        answer: "C",
+        explanation: "Waspadai modus phishing. Jangan pernah mengisi username/kata sandi pada tautan yang tidak resmi dan segera verifikasi kepada unit pengelola TIK."
+      },
+      {
+        id: 60,
+        subtest: "TSI",
+        category: "Keamanan Informasi",
+        question: "Informasi yang belum terverifikasi kebenarannya sebaiknya ....",
+        options: {
+          A: "langsung bagikan",
+          B: "diverifikasi lewat sumber kredibel sebelum disebar",
+          C: "ubah judul",
+          D: "sebar dulu baru cek"
+        },
+        answer: "B",
+        explanation: "Menghindari penyebaran kabar bohong (hoaks) dengan menerapkan verifikasi silang (cross-check) melalui kanal pemerintah atau sumber otoritatif."
+      },
+      {
+        id: 61,
+        subtest: "TSI",
+        category: "Keamanan Informasi",
+        question: "Praktik keamanan digital yang baik dalam pengelolaan akun adalah ....",
+        options: {
+          A: "satu password semua akun",
+          B: "bagi password ke rekan",
+          C: "autentikasi dua faktor (2FA) & kerahasiaan kredensial",
+          D: "catat di ruang publik"
+        },
+        answer: "C",
+        explanation: "Penerapan multi-factor authentication (2FA) dan kombinasi password kuat adalah pilar perlindungan utama dari risiko kebocoran akun aparatur."
+      },
+      {
+        id: 62,
+        subtest: "TSI",
+        category: "Good Governance",
+        question: "Salah satu prinsip utama tata kelola pemerintahan yang baik (Good Governance) adalah ....",
+        options: {
+          A: "kerahasiaan mutlak",
+          B: "akuntabilitas",
+          C: "kekuasaan tanpa pengawasan",
+          D: "monopoli keputusan"
+        },
+        answer: "B",
+        explanation: "Prinsip utama Good Governance adalah Akuntabilitas, Transparansi, Partisipasi, Penegakan Hukum, dan Efektivitas efisiensi."
+      },
+      {
+        id: 63,
+        subtest: "TSI",
+        category: "Good Governance",
+        question: "Pemerintah daerah membuka data program pembangunan agar dapat diawasi publik. Ini mencerminkan ....",
+        options: {
+          A: "transparansi",
+          B: "sentralisasi",
+          C: "diskriminasi",
+          D: "eksklusivitas"
+        },
+        answer: "A",
+        explanation: "Keterbukaan informasi dan kemudahan publik mengakses data realisasi program pembangunan merupakan perwujudan langsung asas keterbukaan (transparansi)."
+      },
+      {
+        id: 64,
+        subtest: "TSI",
+        category: "Good Governance",
+        question: "Kebijakan yang dirumuskan dengan melibatkan masyarakat, akademisi, dan pelaku usaha menerapkan ....",
+        options: {
+          A: "partisipasi",
+          B: "kerahasiaan",
+          C: "dominasi pemerintah",
+          D: "birokrasi tertutup"
+        },
+        answer: "A",
+        explanation: "Keterlibatan multipihak (pentahelix) dalam perumusan kebijakan publik merupakan penerapan prinsip partisipasi publik."
+      },
+      {
+        id: 65,
+        subtest: "TSI",
+        category: "Good Governance",
+        question: "Menetapkan target, melaksanakan, lalu melaporkan pencapaian dan penggunaan anggaran mencerminkan ....",
+        options: {
+          A: "akuntabilitas",
+          B: "nepotisme",
+          C: "eksklusivitas",
+          D: "patronase"
+        },
+        answer: "A",
+        explanation: "Akuntabilitas adalah kewajiban untuk mempertanggungjawabkan pelaksanaan tugas, capaian kinerja, dan anggaran kepada publik serta pimpinan."
+      },
+      {
+        id: 66,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "RPJMD merupakan dokumen perencanaan pembangunan daerah untuk periode ....",
+        options: {
+          A: "1 tahun",
+          B: "3 tahun",
+          C: "5 tahun",
+          D: "20 tahun"
+        },
+        answer: "C",
+        explanation: "Berdasarkan Permendagri No. 86 Tahun 2017, RPJMD merupakan dokumen perencanaan pembangunan daerah untuk jangka waktu 5 (lima) tahun."
+      },
+      {
+        id: 67,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "RPJMD pada prinsipnya merupakan penjabaran dari ....",
+        options: {
+          A: "visi, misi, dan program kepala daerah",
+          B: "program DPRD saja",
+          C: "kebijakan dinas",
+          D: "APBD tahun lalu"
+        },
+        answer: "A",
+        explanation: "RPJMD memuat visi, misi, dan program kepala daerah yang diselaraskan dengan RPJPD dan RPJMN."
+      },
+      {
+        id: 68,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "Berikut yang termasuk bagian dari sistematika RPJMD adalah ....",
+        options: {
+          A: "visi, misi, tujuan, dan sasaran",
+          B: "daftar nama pegawai",
+          C: "daftar inventaris kantor",
+          D: "agenda surat masuk"
+        },
+        answer: "A",
+        explanation: "Sistematika RPJMD mencakup: Analisis Kondisi, Isu Strategis, Visi & Misi, Tujuan & Sasaran, Strategi & Arah Kebijakan, Program Pembangunan, dan Pendanaan."
+      },
+      {
+        id: 69,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "Dalam sistematika RPJMD, gambaran umum kondisi daerah digunakan untuk ....",
+        options: {
+          A: "merumuskan dasar & potensi pembangunan",
+          B: "tentukan jumlah pegawai",
+          C: "tentukan besaran gaji",
+          D: "tentukan kabinet"
+        },
+        answer: "A",
+        explanation: "Gambaran umum kondisi daerah memetakan data dasar, potensi, tantangan, serta kapasitas fiskal daerah sebagai fondasi merumuskan kebijakan yang realistis."
+      },
+      {
+        id: 70,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "Bab isu strategis daerah dalam RPJMD berguna untuk ....",
+        options: {
+          A: "menentukan permasalahan prioritas pembangunan",
+          B: "jadwal cuti pegawai",
+          C: "daftar aset kantor",
+          D: "tata naskah dinas"
+        },
+        answer: "A",
+        explanation: "Isu strategis merumuskan permasalahan mendesak dan prioritas utama yang memiliki dampak luas terhadap kesejahteraan masyarakat daerah."
+      },
+      {
+        id: 71,
+        subtest: "TSI",
+        category: "RPJMD Cascading",
+        question: "Urutan hierarki perencanaan pembangunan daerah yang paling tepat adalah ....",
+        options: {
+          A: "Indikator -> Sasaran -> Visi -> Misi",
+          B: "Visi -> Misi -> Tujuan -> Sasaran -> Strategi/Program",
+          C: "Program -> Sasaran -> Visi -> Sasaran",
+          D: "Sasaran -> Program -> Visi"
+        },
+        answer: "B",
+        explanation: "Cascading perencanaan yang benar berurutan dari Visi -> dijabarkan ke Misi -> dikonkretkan ke Tujuan -> diukur lewat Sasaran -> dieksekusi melalui Strategi dan Program."
+      },
+      {
+        id: 72,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "RPJMD harus selaras dengan dokumen perencanaan nasional/provinsi agar ....",
+        options: {
+          A: "berjalan sendiri-sendiri",
+          B: "terdapat kesinambungan dan konsistensi pembangunan",
+          C: "perangkat daerah bebas sendiri",
+          D: "sekadar formalitas"
+        },
+        answer: "B",
+        explanation: "Keselarasan horizontal dan vertikal menjamin pembangunan nasional bersinergi dan berkesinambungan antartingkat pemerintahan."
+      },
+      {
+        id: 73,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "Visi pembangunan daerah menggambarkan ....",
+        options: {
+          A: "kondisi ideal yang ingin diwujudkan di masa mendatang",
+          B: "daftar kegiatan tahunan",
+          C: "jumlah anggaran",
+          D: "struktur birokrasi"
+        },
+        answer: "A",
+        explanation: "Visi adalah gambaran arah cita-cita ideal masa depan yang hendak dicapai selama periode kepemimpinan kepala daerah."
+      },
+      {
+        id: 74,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "Misi kepala daerah berfungsi untuk ....",
+        options: {
+          A: "menjelaskan langkah strategis mencapai visi",
+          B: "menentukan daftar pegawai",
+          C: "menggantikan fungsi APBD",
+          D: "atur struktur DPRD"
+        },
+        answer: "A",
+        explanation: "Misi adalah rumusan umum upaya-upaya dan tindakan nyata yang akan dilaksanakan untuk merealisasikan visi daerah."
+      },
+      {
+        id: 75,
+        subtest: "TSI",
+        category: "Indikator Kinerja",
+        question: "Tujuan pembangunan daerah seharusnya ....",
+        options: {
+          A: "tidak perlu diukur",
+          B: "kondisi terukur penjabaran dari misi",
+          C: "daftar kegiatan saja",
+          D: "berkaitan anggaran saja"
+        },
+        answer: "B",
+        explanation: "Tujuan merupakan penjabaran terukur dari misi yang menyatakan hasil akhir (outcome) yang ingin dicapai dalam 5 tahun."
+      },
+      {
+        id: 76,
+        subtest: "TSI",
+        category: "Indikator Kinerja",
+        question: "Sasaran pembangunan memiliki fungsi utama sebagai ....",
+        options: {
+          A: "penjabaran tujuan yang lebih spesifik dan terukur",
+          B: "pengganti visi daerah",
+          C: "penanggung jawab program",
+          D: "daftar program pusat"
+        },
+        answer: "A",
+        explanation: "Sasaran merumuskan fokus spesifik hasil yang ingin diwujudkan dari tujuan, dilengkapi dengan target capaian yang jelas."
+      },
+      {
+        id: 77,
+        subtest: "TSI",
+        category: "Indikator Kinerja",
+        question: "Untuk menilai keberhasilan \"Meningkatnya kualitas pelayanan kependudukan\" dibutuhkan ....",
+        options: {
+          A: "slogan pelayanan",
+          B: "indikator kinerja yang relevan dan terukur",
+          C: "tambahan rapat",
+          D: "surat edaran"
+        },
+        answer: "B",
+        explanation: "Indikator Kinerja Utama (IKU) menjadi alat ukur obyektif untuk mengevaluasi secara riil keberhasilan pencapaian suatu sasaran pembangunan."
+      },
+      {
+        id: 78,
+        subtest: "TSI",
+        category: "Indikator Kinerja",
+        question: "Indikator kinerja yang baik seharusnya ....",
+        options: {
+          A: "tidak jelas ukurannya",
+          B: "mengukur pencapaian tujuan/sasaran (SMART)",
+          C: "selalu jumlah kegiatan",
+          D: "hitung jumlah pegawai"
+        },
+        answer: "B",
+        explanation: "Indikator kinerja harus memenuhi kaidah SMART: Specific (spesifik), Measurable (dapat diukur), Achievable (dapat diraih), Relevant (relevan), dan Time-bound (memiliki batas waktu)."
+      },
+      {
+        id: 79,
+        subtest: "TSI",
+        category: "Indikator Kinerja",
+        question: "Menargetkan cakupan pelayanan dari 80% menjadi 90%. Angka 90% berkedudukan sebagai ....",
+        options: {
+          A: "visi",
+          B: "misi",
+          C: "target kinerja",
+          D: "struktur organisasi"
+        },
+        answer: "C",
+        explanation: "Target kinerja adalah nilai kuantitatif atau kualitatif yang ditetapkan untuk dicapai dalam suatu periode tertentu dari sebuah indikator."
+      },
+      {
+        id: 80,
+        subtest: "TSI",
+        category: "RPJMD",
+        question: "Matriks konsep: 1.Visi 2.Misi 3.Sasaran 4.Indikator. Pernyataan pasangan yang benar adalah ....",
+        options: {
+          A: "1 dan 2 saja",
+          B: "1, 2, dan 3",
+          C: "2, 3, dan 4",
+          D: "1, 2, 3, dan 4 (Semua benar)"
+        },
+        answer: "D",
+        explanation: "Seluruh instrumen perencanaan di atas saling terhubung secara runtut dan sah menurut regulasi Permendagri No. 86 Tahun 2017."
+      },
+      {
+        id: 81,
+        subtest: "TSI",
+        category: "Indikator Kinerja",
+        question: "Capaian kegiatan 100% namun indikator hanya menghitung jumlah rapat/surat. Kelemahannya adalah ....",
+        options: {
+          A: "indikator belum mengukur hasil/dampak (outcome)",
+          B: "rapat kurang banyak",
+          C: "surat harus ditambah",
+          D: "kegiatan tak butuh indikator"
+        },
+        answer: "A",
+        explanation: "Menghitung jumlah berkas/rapat hanya mengukur keluaran administratif (output), belum menyentuh perubahan nyata atau manfaat (outcome/impact) bagi masyarakat."
+      },
+      {
+        id: 82,
+        subtest: "TSI",
+        category: "Pelayanan Publik",
+        question: "Mengukur \"meningkatnya kepuasan masyarakat\" paling tepat dilakukan melalui ....",
+        options: {
+          A: "jumlah pegawai",
+          B: "jumlah meja",
+          C: "Indeks Kepuasan Masyarakat (IKM) resmi",
+          D: "jumlah surat masuk"
+        },
+        answer: "C",
+        explanation: "Indeks Kepuasan Masyarakat (IKM) disusun berdasarkan instrumen survei terstandar PermenPAN-RB untuk mengukur persepsi kepuasan pengguna layanan."
+      },
+      {
+        id: 83,
+        subtest: "TSI",
+        category: "Organisasi Pemda",
+        question: "Dalam penyelenggaraan pemerintahan daerah, perangkat daerah pada dasarnya membantu kepala daerah dalam ....",
+        options: {
+          A: "menyelenggarakan urusan pemerintahan yang menjadi kewenangan daerah",
+          B: "menjalankan seluruh urusan pemerintah pusat",
+          C: "membuat undang-undang",
+          D: "menjalankan fungsi peradilan"
+        },
+        answer: "A",
+        explanation: "Sesuai PP No. 18 Tahun 2016 tentang Perangkat Daerah, perangkat daerah membantu kepala daerah memimpin pelaksanaan urusan pemerintahan otonom."
+      },
+      {
+        id: 84,
+        subtest: "TSI",
+        category: "Organisasi Pemda",
+        question: "Sekretariat Daerah kabupaten/kota mempunyai tugas utama membantu bupati/wali kota dalam ....",
+        options: {
+          A: "menyusun kebijakan dan mengoordinasikan administratif pelaksanaan tugas perangkat daerah serta pelayanan administratif",
+          B: "melaksanakan seluruh urusan teknis kesehatan",
+          C: "menyelenggarakan pemilihan umum",
+          D: "mengadili pelanggaran hukum"
+        },
+        answer: "A",
+        explanation: "Sekretariat Daerah adalah unsur staf pembantu pimpinan yang dipimpin Sekda bertugas menyusun kebijakan strategis dan mengoordinasikan seluruh OPD."
+      },
+      {
+        id: 85,
+        subtest: "TSI",
+        category: "Organisasi Pemda",
+        question: "Salah satu fungsi Sekretariat Daerah adalah ....",
+        options: {
+          A: "mengoordinasikan pelaksanaan tugas perangkat daerah",
+          B: "menggantikan DPRD",
+          C: "melaksanakan fungsi yudikatif",
+          D: "menetapkan undang-undang"
+        },
+        answer: "A",
+        explanation: "Fungsi sentral Setda adalah koordinasi perumusan kebijakan daerah, pemantauan dan evaluasi pelaksanaan tugas seluruh perangkat daerah."
+      },
+
+      // 86 - 100: Tes Kompetensi Penunjang (TKP)
+      {
+        id: 86,
+        subtest: "TKP",
+        category: "Perangkat Daerah",
+        question: "Perangkat daerah yang pada umumnya melaksanakan urusan pemerintahan yang menjadi kewenangan daerah dalam bidang tertentu adalah ....",
+        options: {
+          A: "dinas",
+          B: "DPRD",
+          C: "pengadilan",
+          D: "kejaksaan"
+        },
+        answer: "A",
+        explanation: "Dinas daerah merupakan unsur pelaksana urusan pemerintahan yang diserahkan kepada daerah otonom (misal: Dinas Pendidikan, Kesehatan, PU)."
+      },
+      {
+        id: 87,
+        subtest: "TKP",
+        category: "Perangkat Daerah",
+        question: "Badan Daerah pada prinsipnya berkaitan dengan ....",
+        options: {
+          A: "pelaksanaan fungsi penunjang urusan pemerintahan daerah",
+          B: "fungsi peradilan",
+          C: "pembentukan undang-undang",
+          D: "penyelenggaraan hubungan diplomatik"
+        },
+        answer: "A",
+        explanation: "Badan Daerah bertindak sebagai unsur penunjang urusan pemerintahan daerah (seperti Bappeda untuk perencanaan, BPKAD untuk keuangan, BKPSDM untuk kepegawaian)."
+      },
+      {
+        id: 88,
+        subtest: "TKP",
+        category: "Perangkat Daerah",
+        question: "Inspektorat Daerah memiliki fungsi utama dalam ....",
+        options: {
+          A: "pembinaan dan pengawasan penyelenggaraan pemerintahan daerah",
+          B: "pelayanan administrasi kependudukan saja",
+          C: "pembangunan jalan nasional",
+          D: "pengelolaan hubungan luar negeri"
+        },
+        answer: "A",
+        explanation: "Inspektorat bertindak sebagai Aparat Pengawasan Intern Pemerintah (APIP) yang mengawasi akuntabilitas dan membina tata kelola organisasi perangkat daerah."
+      },
+      {
+        id: 89,
+        subtest: "TKP",
+        category: "Perangkat Daerah",
+        question: "Kecamatan dalam struktur pemerintahan daerah mempunyai karakter sebagai perangkat daerah yang bersifat ....",
+        options: {
+          A: "kewilayahan",
+          B: "legislatif",
+          C: "yudikatif",
+          D: "diplomatik"
+        },
+        answer: "A",
+        explanation: "Kecamatan merupakan perangkat daerah yang berkedudukan di wilayah tertentu untuk menyelenggarakan koordinasi pemerintahan kewilayahan."
+      },
+      {
+        id: 90,
+        subtest: "TKP",
+        category: "Koordinasi Antar OPD",
+        question: "Jika terjadi tumpang tindih pelaksanaan tugas antara dua perangkat daerah, langkah yang paling tepat adalah ....",
+        options: {
+          A: "masing-masing tetap jalan tanpa koordinasi",
+          B: "memperjelas pembagian tugas, fungsi, kewenangan, dan melakukan koordinasi",
+          C: "salah satu hentikan seluruh kegiatan",
+          D: "serahkan tugas ke pusat"
+        },
+        answer: "B",
+        explanation: "Penyelesaian tumpang tindih dilakukan dengan sinkronisasi uraian tugas dan fungsi (Tusi) melalui koordinasi yang dipimpin Sekretaris Daerah / Biro Organisasi."
+      },
+      {
+        id: 91,
+        subtest: "TKP",
+        category: "Koordinasi Antar OPD",
+        question: "Koordinasi dalam organisasi pemerintahan diperlukan terutama untuk ....",
+        options: {
+          A: "menghilangkan tanggung jawab",
+          B: "memastikan kegiatan antarunit berjalan selaras dan tidak terjadi tumpang tindih",
+          C: "memperbanyak jenjang birokrasi",
+          D: "mengurangi komunikasi"
+        },
+        answer: "B",
+        explanation: "Koordinasi menyelaraskan ritme kerja seluruh komponen organisasi demi menghindari redundansi pekerjaan serta inefisiensi anggaran negara."
+      },
+      {
+        id: 92,
+        subtest: "TKP",
+        category: "Koordinasi Antar OPD",
+        question: "Kepala perangkat daerah memperoleh kebijakan dari kepala daerah dan membutuhkan koordinasi dengan OPD lain. Kondisi tersebut menunjukkan pentingnya ....",
+        options: {
+          A: "koordinasi horizontal dan vertikal sesuai kewenangan",
+          B: "komunikasi informal saja",
+          C: "penghapusan struktur organisasi",
+          D: "pengambilan keputusan individual"
+        },
+        answer: "A",
+        explanation: "Koordinasi vertikal (arahan pimpinan ke bawahan) dan horisontal (antarsesama kepala instansi selevel) penting menjaga keutuhan program strategis."
+      },
+      {
+        id: 93,
+        subtest: "TKP",
+        category: "Koordinasi Antar OPD",
+        question: "Apabila suatu kegiatan melibatkan Dinas A, Dinas B, dan Badan C, tetapi tidak ada yang mengoordinasikan, risiko terbesar adalah ....",
+        options: {
+          A: "pelaksanaan lebih terarah",
+          B: "tumpang tindih kewenangan dan ketidaksinkronan kegiatan",
+          C: "efisiensi otomatis meningkat",
+          D: "akuntabilitas meningkat"
+        },
+        answer: "B",
+        explanation: "Ketiadaan lead agency koordinatif memicu ego sektoral, program bertabrakan, dan pemborosan anggaran tanpa hasil optimal."
+      },
+      {
+        id: 94,
+        subtest: "TKP",
+        category: "Koordinasi Antar OPD",
+        question: "Sekretariat Daerah memiliki posisi strategis dalam koordinasi karena ....",
+        options: {
+          A: "berperan dalam pengoordinasian pelaksanaan tugas perangkat daerah dan pelayanan administratif",
+          B: "menggantikan seluruh tugas dinas",
+          C: "mempunyai fungsi lembaga legislatif",
+          D: "mempunyai kewenangan mengadili"
+        },
+        answer: "A",
+        explanation: "Secara yuridis, Sekretariat Daerah memegang kewenangan sentral mengoordinasikan kebijakan dan administrasi seluruh dinas, badan, dan kecamatan di daerah."
+      },
+      {
+        id: 95,
+        subtest: "TKP",
+        category: "Regulasi Jabatan ASN",
+        question: "Dalam sistem ASN saat ini, UU Nomor 20 Tahun 2023 menggunakan pengelompokan jabatan menjadi ....",
+        options: {
+          A: "jabatan pusat dan daerah",
+          B: "jabatan manajerial dan jabatan nonmanajerial",
+          C: "jabatan politik dan swasta",
+          D: "jabatan struktural dan honorer"
+        },
+        answer: "B",
+        explanation: "Berdasarkan Pasal 13 UU No. 20 Tahun 2023, klasifikasi jabatan ASN terdiri atas 2 kategori utama: Jabatan Manajerial dan Jabatan Nonmanajerial."
+      },
+      {
+        id: 96,
+        subtest: "TKP",
+        category: "Regulasi Jabatan ASN",
+        question: "Jabatan manajerial dalam ASN terdiri antara lain atas ....",
+        options: {
+          A: "jabatan pimpinan tinggi, jabatan administrator, dan jabatan pengawas",
+          B: "jabatan pelaksana dan tenaga honorer saja",
+          C: "jabatan fungsional dan tenaga kontrak saja",
+          D: "jabatan politik dan profesional"
+        },
+        answer: "A",
+        explanation: "Berdasarkan UU ASN 20/2023, Jabatan Manajerial terdiri atas: Jabatan Pimpinan Tinggi (JPT Utama, Madya, Pratama), Jabatan Administrator, dan Jabatan Pengawas."
+      },
+      {
+        id: 97,
+        subtest: "TKP",
+        category: "Regulasi Jabatan ASN",
+        question: "Dalam konteks struktur birokrasi lama, istilah \"eselon\" banyak digunakan untuk menggambarkan ....",
+        options: {
+          A: "tingkatan jabatan struktural",
+          B: "pangkat golongan ruang semata",
+          C: "masa kerja pegawai",
+          D: "tingkat pendidikan pegawai"
+        },
+        answer: "A",
+        explanation: "Eselonisasi merupakan warisan penjenjangan kepemimpinan struktural (Eselon I, II, III, IV) sebelum bertransformasi ke nomenklatur jabatan manajerial modern."
+      },
+      {
+        id: 98,
+        subtest: "TKP",
+        category: "Regulasi Jabatan ASN",
+        question: "Seorang ASN memiliki kompetensi teknis tinggi dan menjalankan tugas keahlian tertentu tanpa memimpin unit struktural. Jabatannya adalah ....",
+        options: {
+          A: "jabatan fungsional/nonmanajerial",
+          B: "jabatan pimpinan politik",
+          C: "jabatan kepala daerah",
+          D: "jabatan legislatif"
+        },
+        answer: "A",
+        explanation: "Jabatan Fungsional (bagian dari kelompok Nonmanajerial) berfokus pada keahlian atau keterampilan spesifik yang tidak memimpin struktur administratif kepemimpinan."
+      },
+      {
+        id: 99,
+        subtest: "TKP",
+        category: "Manajemen ASN",
+        question: "Pengangkatan ASN dalam suatu jabatan pada prinsipnya harus mempertimbangkan ....",
+        options: {
+          A: "hubungan keluarga",
+          B: "sistem merit, kualifikasi, kompetensi, dan persyaratan jabatan sesuai ketentuan",
+          C: "kedekatan pribadi",
+          D: "senioritas tanpa kompetensi"
+        },
+        answer: "B",
+        explanation: "UU ASN mewajibkan pengangkatan pegawai berlandaskan sistem merit: kompetensi teruji, kualifikasi pendidikan, integritas, dan rekam jejak kinerja yang objektif."
+      },
+      {
+        id: 100,
+        subtest: "TKP",
+        category: "Manajemen ASN",
+        question: "Seorang pejabat akan diberhentikan dari jabatannya. Tindakan tersebut harus dilakukan ....",
+        options: {
+          A: "berdasarkan keputusan informal pimpinan",
+          B: "sesuai ketentuan peraturan perundang-undangan dan prosedur yang berlaku",
+          C: "berdasarkan permintaan rekan kerja",
+          D: "berdasarkan hasil jajak pendapat pegawai"
+        },
+        answer: "B",
+        explanation: "Setiap mutasi, rotasi, maupun pemberhentian jabatan ASN harus tunduk pada asas legalitas tata usaha negara dan prosedur hukum yang berlaku."
+      }
+    ];
+
+    /* Official Passing Grade Rules based on Attachment 2 */
+    const PASSING_GRADE = {
+      TWK: { label: "Tes Wawasan Kebangsaan", minQ: 1, maxQ: 30, total: 30, maxScore: 150, passScore: 90 },
+      TKT: { label: "Tes Kompetensi Teknis", minQ: 31, maxQ: 55, total: 25, maxScore: 125, passScore: 75 },
+      TSI: { label: "Tes Substansi Instansi", minQ: 56, maxQ: 85, total: 30, maxScore: 150, passScore: 90 },
+      TKP: { label: "Tes Kompetensi Penunjang", minQ: 86, maxQ: 100, total: 15, maxScore: 75, passScore: 45 },
+      TOTAL: { label: "Total Keseluruhan", total: 100, maxScore: 500, passScore: 300 }
+    };
+  </script>
+
+  <script>
+    // State management
+    let currentMode = 'exam'; // 'exam' or 'study'
+    let currentIndex = 0; // 0 to 99
+    let userAnswers = {}; // { 1: 'B', 2: 'A', ... }
+    let flaggedQuestions = {}; // { 1: true, ... }
+    let examTimeRemaining = 90 * 60; // 90 minutes in seconds
+    let examTimerInterval = null;
+    let gridFilter = 'ALL';
+    let reviewFilter = 'all';
+    let baseFontSize = 16; // base in px
+
+    // Initializer
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+    });
+
+    function initApp() {
+      // Build Question Navigation Grid (1 to 100)
+      renderNumberGrid();
+    }
+
+    function changeFontSize(delta) {
+      baseFontSize = Math.min(22, Math.max(13, baseFontSize + delta));
+      const qText = document.getElementById('q-content');
+      if (qText) {
+        qText.style.fontSize = baseFontSize + 'px';
+      }
+    }
+
+    function goHome() {
+      if (currentMode === 'exam' && examTimerInterval) {
+        if (!confirm("Peringatan: Ujian masih berlangsung. Apakah Anda yakin ingin membatalkan ujian dan kembali ke beranda?")) {
+          return;
+        }
+      }
+      clearInterval(examTimerInterval);
+      document.getElementById('view-home').classList.remove('hidden');
+      document.getElementById('view-exam').classList.add('hidden');
+      document.getElementById('view-result').classList.add('hidden');
+      document.getElementById('view-review').classList.add('hidden');
+      document.getElementById('btn-header-home').classList.add('hidden');
+    }
+
+    function confirmExitExam() {
+      goHome();
+    }
+
+    function startExam(mode) {
+      currentMode = mode;
+      currentIndex = 0;
+      userAnswers = {};
+      flaggedQuestions = {};
+
+      // Hide views
+      document.getElementById('view-home').classList.add('hidden');
+      document.getElementById('view-result').classList.add('hidden');
+      document.getElementById('view-review').classList.add('hidden');
+      document.getElementById('view-exam').classList.remove('hidden');
+      document.getElementById('btn-header-home').classList.remove('hidden');
+
+      // Adjust controls based on mode
+      const badgeMode = document.getElementById('badge-mode');
+      const timerCont = document.getElementById('timer-container');
+      const btnFinish = document.getElementById('btn-finish-exam');
+      const raguWrap = document.getElementById('ragu-toggle-wrap');
+
+      if (mode === 'exam') {
+        badgeMode.textContent = "SIMULASI UJIAN CAT";
+        badgeMode.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-100 text-blue-800 uppercase tracking-wide";
+        timerCont.classList.remove('hidden');
+        btnFinish.classList.remove('hidden');
+        raguWrap.classList.remove('hidden');
+        startTimer(90 * 60);
+      } else {
+        badgeMode.textContent = "MODE BELAJAR MANDIRI";
+        badgeMode.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-800 uppercase tracking-wide";
+        timerCont.classList.add('hidden');
+        btnFinish.classList.remove('hidden');
+        raguWrap.classList.add('hidden');
+        clearInterval(examTimerInterval);
+      }
+
+      renderNumberGrid();
+      loadQuestion(currentIndex);
+    }
+
+    function startTimer(seconds) {
+      clearInterval(examTimerInterval);
+      examTimeRemaining = seconds;
+      updateTimerDisplay();
+
+      examTimerInterval = setInterval(() => {
+        examTimeRemaining--;
+        updateTimerDisplay();
+
+        if (examTimeRemaining <= 0) {
+          clearInterval(examTimerInterval);
+          executeFinishExam();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(examTimeRemaining / 60);
+      const secs = examTimeRemaining % 60;
+      const formatted = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const el = document.getElementById('timer-display');
+      const cont = document.getElementById('timer-container');
+      el.textContent = formatted;
+
+      if (examTimeRemaining <= 300) { // < 5 mins
+        cont.classList.add('bg-red-700', 'timer-warning');
+        cont.classList.remove('bg-slate-900');
+      } else {
+        cont.classList.remove('bg-red-700', 'timer-warning');
+        cont.classList.add('bg-slate-900');
+      }
+    }
+
+    function loadQuestion(index) {
+      currentIndex = index;
+      const q = QUESTIONS_DATA[index];
+      const qNumber = index + 1;
+
+      // Update question text and headers
+      document.getElementById('q-number').textContent = qNumber;
+      document.getElementById('q-content').textContent = q.question;
+      document.getElementById('badge-category').textContent = q.subtest;
+      document.getElementById('text-topic').textContent = `${q.subtest} - ${q.category}`;
+      document.getElementById('q-subtest-label').textContent = `${PASSING_GRADE[q.subtest].label} (${q.subtest})`;
+
+      // Category color on badge
+      const catBadge = document.getElementById('badge-category');
+      if (q.subtest === 'TWK') catBadge.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-100 text-blue-800';
+      else if (q.subtest === 'TKT') catBadge.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-800';
+      else if (q.subtest === 'TSI') catBadge.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-purple-100 text-purple-800';
+      else catBadge.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-100 text-amber-800';
+
+      // Check ragu-ragu
+      const checkRagu = document.getElementById('check-ragu');
+      checkRagu.checked = !!flaggedQuestions[qNumber];
+
+      // Options Rendering
+      const optContainer = document.getElementById('options-container');
+      optContainer.innerHTML = '';
+
+      const selectedOpt = userAnswers[qNumber];
+
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const text = q.options[letter];
+        if (!text) return;
+
+        const isSelected = selectedOpt === letter;
+        const optButton = document.createElement('button');
+        optButton.type = 'button';
+        optButton.onclick = () => selectAnswer(qNumber, letter);
+
+        let borderStyle = 'border-slate-200 hover:border-blue-400 bg-white hover:bg-slate-50';
+        let circleStyle = 'border-slate-300 text-slate-500 bg-slate-50';
+
+        if (isSelected) {
+          borderStyle = 'border-blue-600 bg-blue-50/70 shadow-sm';
+          circleStyle = 'border-blue-600 bg-blue-600 text-white font-bold';
+        }
+
+        // In study mode, show immediate green/red feedback once picked
+        if (currentMode === 'study' && selectedOpt) {
+          if (letter === q.answer) {
+            borderStyle = 'border-emerald-500 bg-emerald-50 shadow-sm';
+            circleStyle = 'border-emerald-600 bg-emerald-600 text-white font-bold';
+          } else if (isSelected && letter !== q.answer) {
+            borderStyle = 'border-red-400 bg-red-50';
+            circleStyle = 'border-red-500 bg-red-500 text-white font-bold';
+          }
+        }
+
+        optButton.className = `w-full text-left p-3 sm:p-4 rounded-xl border-2 ${borderStyle} transition flex items-start gap-3.5 group`;
+        optButton.innerHTML = `
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ${circleStyle} flex items-center justify-center shrink-0 text-xs sm:text-sm font-bold transition">
+            ${letter}
+          </div>
+          <div class="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed pt-1">
+            ${text}
+          </div>
+        `;
+        optContainer.appendChild(optButton);
+      });
+
+      // Explanation box (Always show in study mode if answered, hide in exam)
+      const expBox = document.getElementById('explanation-box');
+      const expText = document.getElementById('explanation-text');
+      if (currentMode === 'study' && selectedOpt) {
+        expBox.classList.remove('hidden');
+        expText.innerHTML = `<strong>Kunci Jawaban: ${q.answer}</strong><br>${q.explanation}`;
+      } else {
+        expBox.classList.add('hidden');
+      }
+
+      // Prev/Next disabled states
+      document.getElementById('btn-prev').disabled = (index === 0);
+      const nextBtnText = document.getElementById('btn-next');
+      if (index === QUESTIONS_DATA.length - 1) {
+        nextBtnText.innerHTML = `<span>Selesai</span> <i class="fa-solid fa-flag-checkered"></i>`;
+      } else {
+        nextBtnText.innerHTML = `<span>Berikutnya</span> <i class="fa-solid fa-arrow-right"></i>`;
+      }
+
+      updateGridButtonStatus(qNumber);
+      updateAnsweredCounter();
+    }
+
+    function selectAnswer(qNumber, letter) {
+      userAnswers[qNumber] = letter;
+      renderNumberGrid();
+      loadQuestion(currentIndex);
+    }
+
+    function toggleRaguCurrent() {
+      const qNumber = currentIndex + 1;
+      const chk = document.getElementById('check-ragu');
+      if (chk.checked) {
+        flaggedQuestions[qNumber] = true;
+      } else {
+        delete flaggedQuestions[qNumber];
+      }
+      renderNumberGrid();
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        loadQuestion(currentIndex - 1);
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < QUESTIONS_DATA.length - 1) {
+        loadQuestion(currentIndex + 1);
+      } else {
+        confirmSubmitExam();
+      }
+    }
+
+    function jumpTo(qNumber) {
+      loadQuestion(qNumber - 1);
+    }
+
+    function renderNumberGrid() {
+      const container = document.getElementById('grid-sheet');
+      container.innerHTML = '';
+
+      QUESTIONS_DATA.forEach((q, idx) => {
+        const qNum = q.id;
+
+        // Filtering
+        if (gridFilter === 'TWK' && q.subtest !== 'TWK') return;
+        if (gridFilter === 'TKT' && q.subtest !== 'TKT') return;
+        if (gridFilter === 'TSI_TKP' && !(q.subtest === 'TSI' || q.subtest === 'TKP')) return;
+
+        const isCurrent = idx === currentIndex;
+        const hasAnswer = !!userAnswers[qNum];
+        const isRagu = !!flaggedQuestions[qNum];
+
+        const btn = document.createElement('button');
+        btn.id = `btn-grid-${qNum}`;
+        btn.onclick = () => loadQuestion(idx);
+
+        let colorClasses = 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200';
+
+        if (isRagu) {
+          colorClasses = 'bg-amber-500 text-white border-amber-600 font-bold';
+        } else if (hasAnswer) {
+          colorClasses = 'bg-emerald-600 text-white border-emerald-700 font-bold';
+        }
+
+        let ringClass = isCurrent ? 'ring-2 ring-blue-600 ring-offset-2 scale-105 z-10' : '';
+
+        btn.className = `grid-btn h-9 rounded-lg border text-xs font-semibold flex items-center justify-center transition-all ${colorClasses} ${ringClass}`;
+        btn.textContent = qNum;
+
+        container.appendChild(btn);
+      });
+
+      updateAnsweredCounter();
+    }
+
+    function updateGridButtonStatus(qNumber) {
+      renderNumberGrid();
+    }
+
+    function updateAnsweredCounter() {
+      const answeredCount = Object.keys(userAnswers).length;
+      document.getElementById('answered-counter').textContent = `${answeredCount} / 100 Selesai`;
+    }
+
+    function filterGridCategory(cat) {
+      gridFilter = cat;
+      document.querySelectorAll('.cat-pill').forEach(pill => {
+        if (pill.dataset.cat === cat) {
+          pill.className = "cat-pill py-1 rounded bg-blue-600 text-white font-bold";
+        } else {
+          pill.className = "cat-pill py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200";
+        }
+      });
+      renderNumberGrid();
+    }
+
+    function confirmSubmitExam() {
+      const answeredCount = Object.keys(userAnswers).length;
+      const raguCount = Object.keys(flaggedQuestions).length;
+      const emptyCount = 100 - answeredCount;
+
+      document.getElementById('modal-stat-answered').textContent = answeredCount;
+      document.getElementById('modal-stat-ragu').textContent = raguCount;
+      document.getElementById('modal-stat-empty').textContent = emptyCount;
+
+      document.getElementById('modal-confirm').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('modal-confirm').classList.add('hidden');
+    }
+
+    function showInfoModal() {
+      document.getElementById('modal-info').classList.remove('hidden');
+    }
+
+    function closeInfoModal() {
+      document.getElementById('modal-info').classList.add('hidden');
+    }
+
+    function executeFinishExam() {
+      clearInterval(examTimerInterval);
+      closeConfirmModal();
+
+      // Calculate Scores
+      let scores = {
+        TWK: { correct: 0, points: 0, pass: false },
+        TKT: { correct: 0, points: 0, pass: false },
+        TSI: { correct: 0, points: 0, pass: false },
+        TKP: { correct: 0, points: 0, pass: false },
+        TOTAL: { correct: 0, points: 0, pass: false }
+      };
+
+      QUESTIONS_DATA.forEach(q => {
+        const uAns = userAnswers[q.id];
+        if (uAns && uAns === q.answer) {
+          scores[q.subtest].correct += 1;
+          scores[q.subtest].points += 5; // 5 points each
+          scores.TOTAL.correct += 1;
+          scores.TOTAL.points += 5;
+        }
+      });
+
+      // Assess passing grades per subtest
+      scores.TWK.pass = (scores.TWK.points >= PASSING_GRADE.TWK.passScore);
+      scores.TKT.pass = (scores.TKT.points >= PASSING_GRADE.TKT.passScore);
+      scores.TSI.pass = (scores.TSI.points >= PASSING_GRADE.TSI.passScore);
+      scores.TKP.pass = (scores.TKP.points >= PASSING_GRADE.TKP.passScore);
+
+      const allSubtestsPassed = (scores.TWK.pass && scores.TKT.pass && scores.TSI.pass && scores.TKP.pass);
+      const totalPassed = (scores.TOTAL.points >= PASSING_GRADE.TOTAL.passScore);
+      const isOverallPassed = allSubtestsPassed && totalPassed;
+
+      // Render Scorecard UI
+      renderScorecardUI(scores, isOverallPassed);
+
+      // Switch view
+      document.getElementById('view-exam').classList.add('hidden');
+      document.getElementById('view-result').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderScorecardUI(scores, isOverallPassed) {
+      const banner = document.getElementById('result-status-card');
+      const bgGlow = document.getElementById('result-bg-glow');
+      const badgeIcon = document.getElementById('result-icon-badge');
+      const statusText = document.getElementById('result-status-text');
+      const noteText = document.getElementById('result-note-text');
+      const totalScoreText = document.getElementById('result-total-score');
+
+      totalScoreText.innerHTML = `${scores.TOTAL.points} <span class="text-base text-white/70 font-normal">/ 500</span>`;
+
+      if (isOverallPassed) {
+        bgGlow.className = "absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-800 opacity-95";
+        badgeIcon.innerHTML = `<i class="fa-solid fa-award text-amber-300"></i>`;
+        statusText.textContent = "MEMENUHI AMBANG BATAS (LULUS)";
+        noteText.textContent = "Selamat! Anda dinyatakan LULUS karena berhasil melampaui seluruh nilai ambang batas pada tiap subtes serta memenuhi syarat total nilai kelulusan minimal 300.";
+      } else {
+        bgGlow.className = "absolute inset-0 bg-gradient-to-r from-rose-700 to-red-900 opacity-95";
+        badgeIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-300"></i>`;
+        statusText.textContent = "BELUM MEMENUHI SYARAT (TIDAK LULUS)";
+        
+        let failedReasons = [];
+        if (!scores.TWK.pass) failedReasons.push(`TWK (${scores.TWK.points} < ${PASSING_GRADE.TWK.passScore})`);
+        if (!scores.TKT.pass) failedReasons.push(`TKT (${scores.TKT.points} < ${PASSING_GRADE.TKT.passScore})`);
+        if (!scores.TSI.pass) failedReasons.push(`TSI (${scores.TSI.points} < ${PASSING_GRADE.TSI.passScore})`);
+        if (!scores.TKP.pass) failedReasons.push(`TKP (${scores.TKP.points} < ${PASSING_GRADE.TKP.passScore})`);
+        if (scores.TOTAL.points < 300) failedReasons.push(`Total Nilai (${scores.TOTAL.points} < 300)`);
+
+        noteText.innerHTML = `Mohon maaf, Anda belum memenuhi kualifikasi kelulusan karena belum mencapai ambang batas pada: <strong>${failedReasons.join(', ')}</strong>.`;
+      }
+
+      // Populate Table Body
+      const tbody = document.getElementById('score-table-body');
+      tbody.innerHTML = '';
+
+      const subtestsList = ['TWK', 'TKT', 'TSI', 'TKP'];
+
+      subtestsList.forEach((key, index) => {
+        const spec = PASSING_GRADE[key];
+        const sc = scores[key];
+        const row = document.createElement('tr');
+        row.className = "hover:bg-slate-50 transition";
+
+        const passBadge = sc.pass 
+          ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 inline-flex items-center gap-1"><i class="fa-solid fa-check"></i> LULUS</span>`
+          : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 inline-flex items-center gap-1"><i class="fa-solid fa-xmark"></i> GAGAL</span>`;
+
+        row.innerHTML = `
+          <td class="p-3.5 font-medium">
+            <span class="font-bold text-slate-900">${index + 1}. ${spec.label}</span>
+            <span class="text-xs text-slate-500 block font-normal">Soal No. ${spec.minQ} - ${spec.maxQ}</span>
+          </td>
+          <td class="p-3.5 text-center font-mono">${spec.total}</td>
+          <td class="p-3.5 text-center font-mono">${spec.maxScore}</td>
+          <td class="p-3.5 text-center font-mono font-semibold text-slate-600">${spec.passScore}</td>
+          <td class="p-3.5 text-center font-mono font-bold text-base ${sc.pass ? 'text-emerald-700' : 'text-red-600'}">
+            ${sc.points} <span class="text-xs text-slate-400 font-normal">(${sc.correct} Benar)</span>
+          </td>
+          <td class="p-3.5 text-center">${passBadge}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Total Row
+      const totalRow = document.createElement('tr');
+      totalRow.className = "bg-slate-50 font-bold border-t-2 border-slate-300";
+      const totalPassBadge = (isOverallPassed)
+        ? `<span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-600 text-white inline-flex items-center gap-1"><i class="fa-solid fa-check-double"></i> LULUS</span>`
+        : `<span class="px-3 py-1 rounded-full text-xs font-black bg-red-600 text-white inline-flex items-center gap-1"><i class="fa-solid fa-xmark"></i> TIDAK LULUS</span>`;
+
+      totalRow.innerHTML = `
+        <td class="p-3.5 uppercase tracking-wider text-slate-900">Total Keseluruhan</td>
+        <td class="p-3.5 text-center font-mono">100</td>
+        <td class="p-3.5 text-center font-mono">500</td>
+        <td class="p-3.5 text-center font-mono">300</td>
+        <td class="p-3.5 text-center font-mono text-lg ${scores.TOTAL.points >= 300 ? 'text-emerald-700' : 'text-red-600'}">
+          ${scores.TOTAL.points} <span class="text-xs font-normal text-slate-500">(${scores.TOTAL.correct} Benar)</span>
+        </td>
+        <td class="p-3.5 text-center">${totalPassBadge}</td>
+      `;
+      tbody.appendChild(totalRow);
+    }
+
+    function enterReviewMode() {
+      document.getElementById('view-result').classList.add('hidden');
+      document.getElementById('view-review').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderReviewCards();
+    }
+
+    function showResultSummaryView() {
+      document.getElementById('view-review').classList.add('hidden');
+      document.getElementById('view-result').classList.remove('hidden');
+    }
+
+    function filterReviewList(filter) {
+      reviewFilter = filter;
+      document.querySelectorAll('.review-filter-btn').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+          btn.className = "review-filter-btn px-2.5 py-1 rounded bg-white shadow-xs font-bold text-slate-900";
+        } else {
+          btn.className = "review-filter-btn px-2.5 py-1 rounded text-slate-600 hover:bg-white";
+        }
+      });
+      renderReviewCards();
+    }
+
+    function renderReviewCards() {
+      const container = document.getElementById('review-cards-list');
+      container.innerHTML = '';
+
+      QUESTIONS_DATA.forEach((q, idx) => {
+        const uAns = userAnswers[q.id];
+        const isCorrect = (uAns === q.answer);
+        const isSkipped = !uAns;
+
+        if (reviewFilter === 'correct' && !isCorrect) return;
+        if (reviewFilter === 'wrong' && isCorrect) return;
+
+        let statusBorder = 'border-slate-200';
+        let statusBadge = '';
+
+        if (isSkipped) {
+          statusBorder = 'border-amber-300 bg-amber-50/20';
+          statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">Tidak Dijawab</span>';
+        } else if (isCorrect) {
+          statusBorder = 'border-emerald-300 bg-emerald-50/20';
+          statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1"></i>Benar (+5)</span>';
+        } else {
+          statusBorder = 'border-red-300 bg-red-50/20';
+          statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800"><i class="fa-solid fa-xmark mr-1"></i>Salah (0)</span>';
+        }
+
+        const card = document.createElement('div');
+        card.className = `bg-white rounded-2xl p-5 border-2 ${statusBorder} shadow-xs space-y-4`;
+
+        // Card Header
+        let optionsHtml = '';
+        ['A', 'B', 'C', 'D'].forEach(opt => {
+          let optBg = 'bg-slate-50 border-slate-200 text-slate-700';
+          let indicator = '';
+
+          if (opt === q.answer) {
+            optBg = 'bg-emerald-50 border-emerald-500 font-bold text-emerald-900';
+            indicator = '<span class="text-xs text-emerald-700 font-bold ml-auto"><i class="fa-solid fa-circle-check mr-1"></i>Kunci Jawaban</span>';
+          } else if (uAns === opt && opt !== q.answer) {
+            optBg = 'bg-red-50 border-red-400 font-bold text-red-900';
+            indicator = '<span class="text-xs text-red-600 font-bold ml-auto"><i class="fa-solid fa-circle-xmark mr-1"></i>Jawaban Anda</span>';
+          }
+
+          optionsHtml += `
+            <div class="p-2.5 rounded-xl border ${optBg} flex items-center justify-between text-xs sm:text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-md bg-white border border-slate-300 flex items-center justify-center font-bold text-xs shrink-0">${opt}</span>
+                <span>${q.options[opt]}</span>
+              </div>
+              ${indicator}
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-blue-900 text-sm">Soal No. ${q.id}</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600">${q.subtest} - ${q.category}</span>
+            </div>
+            ${statusBadge}
+          </div>
+
+          <p class="text-sm font-semibold text-slate-800 leading-relaxed">${q.question}</p>
+
+          <div class="space-y-2">
+            ${optionsHtml}
+          </div>
+
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm leading-relaxed text-slate-700">
+            <strong class="text-blue-900 flex items-center gap-1.5 mb-1">
+              <i class="fa-solid fa-file-circle-check text-blue-600"></i> Pembahasan:
+            </strong>
+            <p>${q.explanation}</p>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
